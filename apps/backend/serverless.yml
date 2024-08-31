@@ -1,0 +1,45 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: jianhong
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: rostering-app
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: rostering-app
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-1
+  memorySize: 128
+  timeout: 5
+  architecture: arm64
+
+stages:
+  default:
+    observability: false
+
+functions:
+  api:
+    handler: dist/main.handler
+    events:
+      - httpApi: '*'
+    # environment:
+    #   VERSION: ${param:VERSION}
+
+package:
+  patterns:
+    - '!node_modules'
+    - '!test'
+    - '!src'
+    - '!.eslintrc*'
+    - '!.prettierrc*'
+    - '!README.md'
+    - '!webpack.config.js'
+    - '!tsconfig*'
+    - '!.gitignore'
+    - '.env'
