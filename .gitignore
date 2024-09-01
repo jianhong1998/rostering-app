@@ -3,3 +3,4 @@ dist
 temp
 volume
 postgres-data
+.DS_Store

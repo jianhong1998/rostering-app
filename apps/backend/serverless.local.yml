@@ -7,7 +7,7 @@ service: rostering-app
 
 plugins:
   - serverless-dotenv-plugin
-  # - serverless-offline
+  - serverless-offline
 
 useDotenv: true
 
@@ -18,13 +18,6 @@ provider:
   memorySize: 128
   timeout: 10
   architecture: arm64
-  ecr:
-    images:
-      base-image:
-        path: .
-        file: Dockerfile
-      ecr-image:
-        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/temp/rostering-app@latest
 
 stages:
   default:
@@ -32,8 +25,7 @@ stages:
 
 functions:
   api:
-    # handler: dist/main.handler
-    image: base-image
+    handler: dist/main.handler
     events:
       - httpApi: '*'
     # environment:

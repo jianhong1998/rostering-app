@@ -7,8 +7,18 @@ import { ENTITY_MODELS } from './entity-model';
 export default class DatabaseConfig {
   static getConfig(configService: ConfigService): DataSourceOptions {
     const migrationPathName = join(__dirname, '/migrations/*.{js,ts}');
+    const buildMode = configService.get('BUILD_MODE') ?? 'tsc';
 
-    const rscaPath = join(__dirname, '../ap-southeast-1-bundle.pem');
+    let pathToRootFolder = '../../../';
+
+    if (buildMode === 'webpack') pathToRootFolder = '../';
+    if (buildMode === 'swc') pathToRootFolder = '../../';
+
+    const rscaPath = join(
+      __dirname,
+      pathToRootFolder,
+      'ap-southeast-1-bundle.pem',
+    );
     const pemCa = readFileSync(rscaPath);
 
     return {

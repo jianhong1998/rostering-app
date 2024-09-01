@@ -14,3 +14,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.local
+    ports:
+    env_file:
+      - ./apps/backend/.env
+    network_mode: host
