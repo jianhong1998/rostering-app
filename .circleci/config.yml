@@ -1,0 +1,54 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@6.1.0
+
+commands:
+  generate-env:
+    description: 'Generate .env File'
+    parameters:
+      stage:
+        type: string
+        default: 'DEV'
+    steps:
+      - run:
+          name: remove .env file
+          command: rm -rf .env
+      - run:
+          name: generate env variables
+          command: |
+            echo "VERSION=${<< parameters.stage >>_VERSION}" >> .env
+
+jobs:
+  deploy-to-dev:
+    docker:
+      - image: cimg/node:20.17.0
+    resource_class: medium
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Install Serverless
+          command: |
+            npm install --prefix=$HOME/.local --global serverless@4.2.4
+            sls -v
+      - generate-env:
+          stage: 'DEV'
+      - run:
+          name: build
+          command: npm run build:package
+      - run:
+          name: deploy
+          command: |
+            sls deploy --stage dev --verbose
+
+workflows:
+  deployment:
+    jobs:
+      - deploy-to-dev:
+          context:
+            - serverless-deploy-secret
+          filters:
+            branches:
+              only:
+                - master
