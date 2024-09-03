@@ -15,9 +15,18 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: ap-southeast-1
-  memorySize: 128
-  timeout: 10
+  memorySize: 512
+  timeout: 30
   architecture: arm64
+  vpc:
+    securityGroupIds:
+      - sg-0f00203f157badb15
+      - sg-08888aa92480950a0
+      - sg-0fb392186f65514c1
+    subnetIds:
+      - subnet-03fa782274ab82e9a
+      - subnet-09968ba577be9aa97
+      - subnet-09a57e12b5c23444c
   ecr:
     images:
       base-image:

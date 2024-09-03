@@ -34,4 +34,4 @@ COPY --from=build /usr/apps/backend/nest-cli.json ./
 COPY --from=build /usr/apps/backend/serverless.local.yml ./
 COPY --from=build /usr/apps/backend/.env ./
 
-CMD ["sh", "-c", "npx serverless offline start -c serverless.docker.yml --httpPort 3001"]
+CMD ["sh", "-c", "npx serverless offline start -c serverless.local.yml --httpPort 3001"]
