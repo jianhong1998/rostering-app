@@ -5,7 +5,8 @@ FROM --platform=linux/arm64 node:20.15.1-slim AS build
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
-RUN npm ci
+# RUN npm ci
+RUN npm i
 
 COPY . .
 RUN npm run build:swc
@@ -17,7 +18,8 @@ FROM --platform=linux/arm64 node:20.15.1-slim AS install
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
-RUN npm ci --omit=dev
+# RUN npm ci --omit=dev
+RUN npm i --omit=dev
 RUN npm i serverless-offline
 
 # =======================================================
