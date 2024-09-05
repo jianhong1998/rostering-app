@@ -35,6 +35,7 @@ jobs:
     docker:
       - image: cimg/node:20.17.0
     resource_class: medium
+    working_directory: $CIRCLE_WORKING_DIRECTORY/apps/backend
     steps:
       - checkout
       - setup_remote_docker:
@@ -51,7 +52,6 @@ jobs:
       - run:
           name: build
           command: |
-            cd apps/backend
             npm run build:swc
       - run:
           name: deploy
