@@ -10,6 +10,9 @@ commands:
       stage:
         type: string
         default: 'DEV'
+      env_type:
+        type: string
+        default: 'dev'
     steps:
       - run:
           name: remove .env file
@@ -17,7 +20,15 @@ commands:
       - run:
           name: generate env variables
           command: |
+            echo "NODE_ENV=${<< parameters.env_type >>}" >> .env
             echo "VERSION=${<< parameters.stage >>_VERSION}" >> .env
+            echo "BUILD_MODE=\"swc\"" >> .env
+            echo "VERSION=${<< parameters.stage >>_VERSION}" >> .env
+            echo "DATABASE_HOST=${<< parameters.stage >>_DATABASE_HOST}" >> .env
+            echo "DATABASE_PORT=${<< parameters.stage >>_DATABASE_PORT}" >> .env
+            echo "DATABASE_USER=${<< parameters.stage >>_DATABASE_USER}" >> .env
+            echo "DATABASE_PASSWORD=${<< parameters.stage >>_DATABASE_PASSWORD}" >> .env
+            echo "DATABASE_DB=${<< parameters.stage >>_DATABASE_DB}" >> .env
 
 jobs:
   deploy-to-dev:
@@ -34,9 +45,10 @@ jobs:
             sls -v
       - generate-env:
           stage: 'DEV'
+          env_type: 'dev'
       - run:
           name: build
-          command: npm run build:package
+          command: npm run build:swc
       - run:
           name: deploy
           command: |
@@ -52,3 +64,4 @@ workflows:
             branches:
               only:
                 - master
+                - cicd-setup
