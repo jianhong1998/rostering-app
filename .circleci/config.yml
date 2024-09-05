@@ -48,11 +48,11 @@ jobs:
       - generate-env:
           stage: 'DEV'
           env_type: 'dev'
-      - run:
-          name: build
-          command: |
-            cd apps/backend
-            npm run build:swc
+      # - run:
+      #     name: build
+      #     command: |
+      #       cd apps/backend
+      #       npm run build:swc
       - run:
           name: deploy
           command: |
