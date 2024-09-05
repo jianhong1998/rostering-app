@@ -35,7 +35,7 @@ jobs:
     docker:
       - image: cimg/node:20.17.0
     resource_class: medium
-    working_directory: $CIRCLE_WORKING_DIRECTORY/apps/backend
+    working_directory: ~/project/apps/backend
     steps:
       - checkout
       - setup_remote_docker:
