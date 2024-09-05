@@ -4,7 +4,7 @@ orbs:
   node: circleci/node@6.1.0
 
 commands:
-  generate-env:
+  generate-backend-env:
     description: 'Generate .env File'
     parameters:
       stage:
@@ -16,10 +16,13 @@ commands:
     steps:
       - run:
           name: remove .env file
-          command: rm -rf .env
+          command: |
+            cd apps/backend
+            rm -rf .env
       - run:
           name: generate env variables
           command: |
+            cd apps/backend
             echo "NODE_ENV=\"${<< parameters.env_type >>}\"" >> .env
             echo "VERSION=${<< parameters.stage >>_VERSION}" >> .env
             echo "BUILD_MODE=\"swc\"" >> .env
@@ -31,7 +34,7 @@ commands:
             echo "DATABASE_DB=\"${<< parameters.stage >>_DATABASE_DB}\"" >> .env
 
 jobs:
-  deploy-to-dev:
+  deploy-backend-to-dev:
     docker:
       - image: cimg/node:20.17.0
     resource_class: medium
@@ -45,7 +48,7 @@ jobs:
           command: |
             npm install --prefix=$HOME/.local --global serverless@4.2.4
             sls -v
-      - generate-env:
+      - generate-backend-env:
           stage: 'DEV'
           env_type: 'dev'
       - run:
@@ -67,7 +70,7 @@ jobs:
 workflows:
   deployment:
     jobs:
-      - deploy-to-dev:
+      - deploy-backend-to-dev:
           context:
             - serverless-deploy-secret
             - common-database-secret
