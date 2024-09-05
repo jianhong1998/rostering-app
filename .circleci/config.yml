@@ -37,6 +37,8 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
       - node/install-packages
       - run:
           name: Install Serverless
@@ -48,7 +50,9 @@ jobs:
           env_type: 'dev'
       - run:
           name: build
-          command: npm run build:swc
+          command: |
+            cd apps/backend
+            npm run build:swc
       - run:
           name: deploy
           command: |
