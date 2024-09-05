@@ -1,12 +1,12 @@
 # =======================================================
 # Build Stage
 # =======================================================
-FROM --platform=linux/arm64 node:20.15.1-slim AS build
+FROM --platform=linux/arm64 node:20.15.1 AS build
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
-# RUN npm ci
-RUN npm i
+RUN npm ci
+# RUN npm i
 
 COPY . .
 RUN npm run build:swc
@@ -14,12 +14,12 @@ RUN npm run build:swc
 # =======================================================
 # Install Stage
 # =======================================================
-FROM --platform=linux/arm64 node:20.15.1-slim AS install
+FROM --platform=linux/arm64 node:20.15.1 AS install
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
-# RUN npm ci --omit=dev
-RUN npm i --omit=dev
+RUN npm ci --omit=dev
+# RUN npm i --omit=dev
 RUN npm i serverless-offline
 
 # =======================================================
