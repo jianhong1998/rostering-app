@@ -64,6 +64,7 @@ workflows:
       - deploy-to-dev:
           context:
             - serverless-deploy-secret
+            - common-database-secret
           filters:
             branches:
               only:
