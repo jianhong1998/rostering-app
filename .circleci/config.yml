@@ -91,7 +91,7 @@ jobs:
       - run:
           name: Install Serverless
           command: |
-            npm install --prefix=$HOME/.local --global serverless@4.2.4 serverless-dotenv-plugin
+            npm install --prefix=$HOME/.local --global serverless@4.2.4
             sls -v
       - run:
           name: Install serverless-dotenv-plugin
