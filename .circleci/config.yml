@@ -49,10 +49,12 @@ jobs:
       - generate-backend-env:
           stage: 'DEV'
           env_type: 'dev'
+      - aws-cli/setup:
+          profile_name: default
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
-                role_arn: arn:aws:iam::383373959609:user/deploy
+                profile_name: default
           repo: serverless-rostering-app-dev
           tag: latest
           platform: linux/arm64
