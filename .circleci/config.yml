@@ -107,6 +107,11 @@ jobs:
       #       cd apps/backend
       #       npm run build:swc
       - run:
+          name: Serverless Version
+          command: |
+            cd apps/backend
+            sls -v
+      - run:
           name: deploy
           command: |
             cd apps/backend
