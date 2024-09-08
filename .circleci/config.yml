@@ -36,8 +36,36 @@ commands:
             echo "DATABASE_PASSWORD=\"${<< parameters.stage >>_DATABASE_PASSWORD}\"" >> .env
             echo "DATABASE_DB=\"${<< parameters.stage >>_DATABASE_DB}\"" >> .env
 
-jobs:
   build-and-push-to-ecr:
+    description: 'Build image and push to ECR'
+    parameters:
+      repo:
+        type: string
+      stage:
+        type: string
+        default: 'DEV'
+      env_type:
+        type: string
+        default: 'dev'
+    steps:
+      - generate-backend-env:
+          stage: << parameters.stage >>
+          env_type: << parameters.env_type >>
+      - aws-cli/setup:
+          profile_name: default
+      - aws-ecr/build_and_push_image:
+          auth:
+            - aws-cli/setup:
+                profile_name: default
+          # repo: serverless-rostering-app-dev
+          repo: << parameters.repo >>
+          tag: latest
+          platform: linux/arm64
+          region: ap-southeast-1
+          build_path: /project/apps/backend
+
+jobs:
+  dev-build-and-push-to-ecr:
     docker:
       - image: 'cimg/node:20.17.0'
     resource_class: medium
@@ -46,19 +74,10 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: false
-      - generate-backend-env:
-          stage: 'DEV'
-          env_type: 'dev'
-      - aws-cli/setup:
-          profile_name: default
-      - aws-ecr/build_and_push_image:
-          auth:
-            - aws-cli/setup:
-                profile_name: default
+      - build-and-push-to-ecr:
           repo: serverless-rostering-app-dev
-          tag: latest
-          platform: linux/arm64
-          region: ap-southeast-1
+          stage: DEV
+          env_type: dev
 
   deploy-backend-to-dev:
     docker:
@@ -93,7 +112,7 @@ jobs:
 workflows:
   deployment:
     jobs:
-      - build-and-push-to-ecr:
+      - dev-build-and-push-to-ecr:
           context:
             - common-database-secret
             - aws-role-secret
