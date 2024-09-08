@@ -62,10 +62,10 @@ commands:
           tag: latest
           platform: linux/arm64
           region: ap-southeast-1
-          build_path: /project/apps/backend
+          build_path: ~/project/apps/backend
 
 jobs:
-  dev-build-and-push-to-ecr:
+  dev-build-image:
     docker:
       - image: 'cimg/node:20.17.0'
     resource_class: medium
@@ -79,7 +79,7 @@ jobs:
           stage: DEV
           env_type: dev
 
-  deploy-backend-to-dev:
+  dev-deploy-backend:
     docker:
       - image: cimg/node:20.17.0
     resource_class: medium
@@ -112,7 +112,7 @@ jobs:
 workflows:
   deployment:
     jobs:
-      - dev-build-and-push-to-ecr:
+      - dev-build-image:
           context:
             - common-database-secret
             - aws-role-secret
@@ -121,7 +121,7 @@ workflows:
               only:
                 - master
                 - cicd-setup
-      - deploy-backend-to-dev:
+      - dev-deploy-backend:
           context:
             - serverless-deploy-secret
             - common-database-secret
@@ -131,4 +131,4 @@ workflows:
                 - master
                 - cicd-setup
           requires:
-            - dev-build-and-push-to-ecr
+            - dev-build-image
