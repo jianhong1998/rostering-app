@@ -33,7 +33,7 @@ provider:
         path: .
         file: Dockerfile
       ecr-image:
-        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/temp/rostering-app@latest
+        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev@base-image
 
 stages:
   default:
@@ -42,7 +42,7 @@ stages:
 functions:
   api:
     # handler: dist/main.handler
-    image: base-image
+    image: ecr-image
     events:
       - httpApi: '*'
     # environment:

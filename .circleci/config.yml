@@ -2,6 +2,9 @@ version: 2.1
 
 orbs:
   node: circleci/node@6.1.0
+  aws-ecr: circleci/aws-ecr@9.3
+  aws-cli: circleci/aws-cli@5.1
+  aws-sg-white-list-circleci-ip: inokappa/aws-sg-white-list-circleci-ip@0.0.3
 
 commands:
   generate-backend-env:
@@ -34,6 +37,27 @@ commands:
             echo "DATABASE_DB=\"${<< parameters.stage >>_DATABASE_DB}\"" >> .env
 
 jobs:
+  build-and-push-to-ecr:
+    docker:
+      - image: 'cimg/node:20.17.0'
+    resource_class: medium
+    steps:
+      - run: sh -c env
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - generate-backend-env:
+          stage: 'DEV'
+          env_type: 'dev'
+      - aws-ecr/build_and_push_image:
+          auth:
+            - aws-cli/setup:
+                role_arn: arn:aws:iam::383373959609:user/deploy
+          repo: serverless-rostering-app-dev
+          tag: latest
+          platform: linux/arm64
+          region: ap-southeast-1
+
   deploy-backend-to-dev:
     docker:
       - image: cimg/node:20.17.0
@@ -48,9 +72,6 @@ jobs:
           command: |
             npm install --prefix=$HOME/.local --global serverless@4.2.4
             sls -v
-      - generate-backend-env:
-          stage: 'DEV'
-          env_type: 'dev'
       - run:
           name: install backend dependencies
           command: |
@@ -70,6 +91,14 @@ jobs:
 workflows:
   deployment:
     jobs:
+      - build-and-push-to-ecr:
+          context:
+            - common-database-secret
+          filters:
+            branches:
+              only:
+                - master
+                - cicd-setup
       - deploy-backend-to-dev:
           context:
             - serverless-deploy-secret
