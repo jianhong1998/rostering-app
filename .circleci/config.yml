@@ -57,7 +57,6 @@ commands:
           auth:
             - aws-cli/setup:
                 profile_name: default
-          # repo: serverless-rostering-app-dev
           repo: << parameters.repo >>
           tag: latest
           platform: linux/arm64
@@ -69,7 +68,7 @@ jobs:
   dev-build-image:
     docker:
       - image: 'cimg/node:20.17.0'
-    resource_class: medium
+    resource_class: large
     steps:
       - run: sh -c env
       - checkout

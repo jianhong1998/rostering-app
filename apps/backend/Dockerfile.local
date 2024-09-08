@@ -17,7 +17,7 @@ FROM --platform=linux/arm64 node:20.15.1-slim AS install
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
-RUN npm ci --only=prod
+RUN npm ci --omit=dev
 RUN npm i serverless-offline
 
 # =======================================================

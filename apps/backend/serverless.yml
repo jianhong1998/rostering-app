@@ -6,7 +6,7 @@ app: rostering-app
 service: rostering-app
 
 plugins:
-  - serverless-dotenv-plugin
+  # - serverless-dotenv-plugin
   # - serverless-offline
 
 useDotenv: true
@@ -29,11 +29,11 @@ provider:
       - subnet-09a57e12b5c23444c
   ecr:
     images:
-      base-image:
-        path: .
-        file: Dockerfile
+      # base-image:
+      #   path: .
+      #   file: Dockerfile
       ecr-image:
-        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev@base-image
+        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev@latest
 
 stages:
   default:

@@ -20,7 +20,7 @@ WORKDIR /usr/apps/backend
 COPY package*.json .
 RUN npm ci --omit=dev
 # RUN npm i --omit=dev
-RUN npm i serverless-offline
+# RUN npm i serverless-offline
 
 # =======================================================
 # Final Stage
