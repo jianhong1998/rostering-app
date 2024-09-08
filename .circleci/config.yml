@@ -94,15 +94,13 @@ jobs:
             npm install --prefix=$HOME/.local --global serverless@4.2.4
             sls -v
       - run:
-          name: Install serverless-dotenv-plugin
+          name: install backend dependencies
           command: |
             cd apps/backend
-            npm i serverless-dotenv-plugin
-      # - run:
-      #     name: install backend dependencies
-      #     command: |
-      #       cd apps/backend
-      #       npm ci
+            npm ci
+      - generate-backend-env:
+          stage: 'DEV'
+          env_type: dev
       # - run:
       #     name: build
       #     command: |
