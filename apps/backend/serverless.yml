@@ -6,7 +6,7 @@ app: rostering-app
 service: rostering-app
 
 plugins:
-  # - serverless-dotenv-plugin
+  - serverless-dotenv-plugin
   # - serverless-offline
 
 useDotenv: true
