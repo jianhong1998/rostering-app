@@ -96,6 +96,7 @@ workflows:
       - build-and-push-to-ecr:
           context:
             - common-database-secret
+            - aws-role-secret
           filters:
             branches:
               only:
