@@ -131,4 +131,4 @@ workflows:
                 - master
                 - cicd-setup
           requires:
-            - build-and-push-to-ecr
+            - dev-build-and-push-to-ecr
