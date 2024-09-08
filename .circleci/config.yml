@@ -109,4 +109,4 @@ workflows:
                 - master
                 - cicd-setup
           requires:
-            - build-adn-push-to-ecr
+            - build-and-push-to-ecr
