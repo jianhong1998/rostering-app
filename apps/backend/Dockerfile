@@ -25,10 +25,11 @@ RUN npm ci --omit=dev
 # =======================================================
 # Final Stage
 # =======================================================
-FROM --platform=linux/arm64 public.ecr.aws/lambda/nodejs:20-arm64 AS final
-WORKDIR ${LAMBDA_TASK_ROOT}
+# FROM --platform=linux/arm64 public.ecr.aws/lambda/nodejs:20-arm64 AS final
+FROM public.ecr.aws/lambda/nodejs:20-arm64 AS final
+WORKDIR /var/task
 
-COPY --from=install /usr/apps/backend/node_modules ./node_modules
+# COPY --from=install /usr/apps/backend/node_modules ./node_modules
 COPY --from=build /usr/apps/backend/dist ./dist
 COPY --from=build /usr/apps/backend/config ./config
 COPY --from=build /usr/apps/backend/ap-southeast-1-bundle.pem ./
