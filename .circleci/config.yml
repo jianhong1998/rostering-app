@@ -62,6 +62,7 @@ commands:
           build_path: ~/project/apps/backend
           path: ~/project/apps/backend
           dockerfile: Dockerfile
+          extra_build_args: --provenance=false
 
 jobs:
   dev-build-image:
