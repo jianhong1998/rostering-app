@@ -25,9 +25,7 @@ RUN npm ci --omit=dev
 # =======================================================
 # Final Stage
 # =======================================================
-ARG LAMBDA_TASK_ROOT
-
-FROM public.ecr.aws/lambda/nodejs:20 AS final
+FROM --platform=linux/arm64 public.ecr.aws/lambda/nodejs:20-arm64 AS final
 WORKDIR ${LAMBDA_TASK_ROOT}
 
 COPY --from=install /usr/apps/backend/node_modules ./node_modules
