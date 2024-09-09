@@ -5,11 +5,10 @@ app: rostering-app
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: rostering-app
 
-plugins:
-  - serverless-dotenv-plugin
-  # - serverless-offline
+# plugins:
+#   - serverless-dotenv-plugin
 
-useDotenv: true
+# useDotenv: true
 
 provider:
   name: aws
@@ -38,22 +37,8 @@ stages:
 
 functions:
   api:
-    # handler: dist/main.handler
     image: ecr-image
     events:
       - httpApi: '*'
     # environment:
     #   VERSION: ${param:VERSION}
-
-package:
-  patterns:
-    - '!node_modules'
-    - '!test'
-    - '!src'
-    - '!.eslintrc*'
-    - '!.prettierrc*'
-    - '!README.md'
-    - '!webpack.config.js'
-    - '!tsconfig*'
-    - '!.gitignore'
-    - '.env'
