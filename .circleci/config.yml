@@ -59,10 +59,9 @@ commands:
                 profile_name: default
           repo: << parameters.repo >>
           tag: latest
-          platform: linux/arm64
-          region: ap-southeast-1
           build_path: ~/project/apps/backend
           path: ~/project/apps/backend
+          dockerfile: Dockerfile
 
 jobs:
   dev-build-image:
