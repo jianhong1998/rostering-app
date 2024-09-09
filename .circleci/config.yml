@@ -94,25 +94,20 @@ jobs:
             npm install --prefix=$HOME/.local --global serverless@4.2.4
             sls -v
       - run:
-          name: install backend dependencies
+          name: Install Backend Dependencies
           command: |
             cd apps/backend
             npm ci
       - generate-backend-env:
           stage: 'DEV'
           env_type: dev
-      # - run:
-      #     name: build
-      #     command: |
-      #       cd apps/backend
-      #       npm run build:swc
       - run:
           name: Serverless Version
           command: |
             cd apps/backend
             sls -v
       - run:
-          name: deploy
+          name: Deploy Dev
           command: |
             cd apps/backend
             sls deploy --stage dev --verbose
