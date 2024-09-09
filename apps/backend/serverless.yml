@@ -29,11 +29,8 @@ provider:
       - subnet-09a57e12b5c23444c
   ecr:
     images:
-      base-image:
-        path: .
-        file: Dockerfile
       ecr-image:
-        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev@latest
+        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev:latest
 
 stages:
   default:
