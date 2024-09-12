@@ -28,8 +28,10 @@ provider:
       - subnet-09a57e12b5c23444c
   ecr:
     images:
-      ecr-image:
+      backend-image:
         uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev:latest
+      db-migration-image:
+        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/rostering-app-dev-migration:latest
 
 stages:
   default:
@@ -37,8 +39,10 @@ stages:
 
 functions:
   api:
-    image: ecr-image
+    image: backend-image
     events:
       - httpApi: '*'
     # environment:
     #   VERSION: ${param:VERSION}
+  db-migration:
+    image: db-migration-image

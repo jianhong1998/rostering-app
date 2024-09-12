@@ -19,6 +19,19 @@ services:
     build:
       context: ./apps/backend
       dockerfile: Dockerfile.local
+      target: final
+    env_file:
+      - ./apps/backend/.env
+    network_mode: host
+    depends_on:
+      db-migration-service:
+        condition: service_completed_successfully
+
+  db-migration-service:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.local
+      target: db-migrate
     env_file:
       - ./apps/backend/.env
     network_mode: host
