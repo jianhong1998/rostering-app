@@ -4,7 +4,7 @@ PROJECT_NAME = "rostering-app"
 up/build:
 	@docker compose \
 		-p ${PROJECT_NAME} \
-		up --build -d --remove-orphans
+		up --build -w --remove-orphans
 
 down:
 	@docker compose \

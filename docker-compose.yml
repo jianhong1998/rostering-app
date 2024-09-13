@@ -26,6 +26,14 @@ services:
     depends_on:
       db-migration-service:
         condition: service_completed_successfully
+    develop:
+      watch:
+        - path: ./apps/backend/src
+          action: rebuild
+        - path: ./apps/backend/.env
+          action: rebuild
+        - path: ./apps/backend/package.json
+          action: rebuild
 
   db-migration-service:
     build:
@@ -35,3 +43,22 @@ services:
     env_file:
       - ./apps/backend/.env
     network_mode: host
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile.local
+    network_mode: host
+    depends_on:
+      db-migration-service:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - path: ./apps/frontend/src
+          action: sync
+          target: /usr/apps/frontend/src
+        - path: ./apps/frontend/package.json
+          action: rebuild
