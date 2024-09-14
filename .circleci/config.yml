@@ -28,7 +28,6 @@ commands:
           command: |
             cd apps/backend
             echo "NODE_ENV=\"${<< parameters.env_type >>}\"" >> .env
-            echo "VERSION=${<< parameters.stage >>_VERSION}" >> .env
             echo "BUILD_MODE=\"swc\"" >> .env
             echo "VERSION=${<< parameters.stage >>_VERSION}" >> .env
             echo "DATABASE_HOST=\"${<< parameters.stage >>_DATABASE_HOST}\"" >> .env
