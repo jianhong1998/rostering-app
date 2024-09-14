@@ -75,24 +75,27 @@ commands:
         description: 'Backend URL'
     steps:
       - checkout
-      - attach_workspace:
-          at: ./apps/frontend
       - node/install-packages
       - run:
           name: Prepare .env File
           command: |
+            cd apps/frontend
             echo VITE_BACKEND_URL=\"<< parameters.backend_url >>\" >> .env
       - run:
           name: Print Generated .env File
-          command: cat .env
+          command: |
+            cd apps/frontend
+            cat .env
       - run:
           name: Build
-          command: npm run build
+          command: |
+            cd apps/frontend
+            npm run build
       - aws-cli/install
       - aws-cli/setup:
           profile_name: default
       - aws-s3/sync:
-          from: ./dist
+          from: ./apps/frontend/dist
           to: 's3://<< parameters.s3_bucket >>/'
 
 jobs:
@@ -155,10 +158,26 @@ jobs:
 workflows:
   deployment:
     jobs:
+      - approve-dev-backend-deploy:
+          type: approval
+          filters:
+            branches:
+              only:
+                - master
+                - cicd-setup
+      - approve-dev-frontend-deploy:
+          type: approval
+          filters:
+            branches:
+              only:
+                - master
+                - cicd-setup
       - dev-build-image:
           context:
             - common-database-secret
             - aws-role-secret
+          requires:
+            - approve-dev-backend-deploy
           filters:
             branches:
               only:
@@ -178,6 +197,8 @@ workflows:
       - dev-deploy-frontend:
           context:
             - aws-role-secret
+          requires:
+            - approve-dev-frontend-deploy
           filters:
             branches:
               only:
