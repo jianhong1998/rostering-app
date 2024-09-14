@@ -213,7 +213,7 @@ workflows:
                 - master
                 - cicd-setup
           requires:
-            - dev-build-image
+            - dev-backend-build-image
       - dev-deploy-frontend:
           context:
             - aws-role-secret
