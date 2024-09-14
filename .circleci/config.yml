@@ -75,7 +75,11 @@ commands:
         description: 'Backend URL'
     steps:
       - checkout
-      - node/install-packages
+      - run:
+          name: Install Dependencies
+          command: |
+            cd apps/frontend
+            npm ci
       - run:
           name: Prepare .env File
           command: |
