@@ -81,7 +81,7 @@ commands:
       - run:
           name: Prepare .env File
           command: |
-            echo VITE_BACKEND_URL=\"<< parameters.backend_url >>\" >>> .env
+            echo VITE_BACKEND_URL=\"<< parameters.backend_url >>\" >> .env
       - run:
           name: Print Generated .env File
           command: cat .env
