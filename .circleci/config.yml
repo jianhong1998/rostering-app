@@ -89,12 +89,11 @@ commands:
           name: Build
           command: npm run build
       - aws-cli/install
+      - aws-cli/setup:
+          profile_name: default
       - aws-s3/sync:
           from: ./dist
           to: 's3://<< parameters.s3_bucket >>/'
-          auth:
-            - aws-cli/setup:
-              profile_name: default
 
 jobs:
   dev-build-image:
