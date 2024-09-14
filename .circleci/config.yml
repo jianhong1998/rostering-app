@@ -150,7 +150,7 @@ jobs:
       - backend-app-build-and-push-to-ecr:
           app_repo: serverless-rostering-app-dev
           stage: DEV
-          env_type: dev
+          env_type: aws-dev
 
   dev-db-migration-build-image:
     docker:
@@ -163,7 +163,7 @@ jobs:
       - db-migration-build-and-push-to-ecr:
           db_migration_repo: serverless-rostering-app-dev
           stage: DEV
-          env_type: dev
+          env_type: aws-dev
 
   dev-deploy-backend:
     docker:
