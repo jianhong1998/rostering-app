@@ -160,7 +160,7 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: false
       - db-migration-build-and-push-to-ecr:
-          db_migration_repo: serverless-rostering-app-dev
+          db_migration_repo: rostering-app-dev-migration
           stage: DEV
           env_type: aws-dev
 
