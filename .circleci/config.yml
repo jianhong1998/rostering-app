@@ -19,12 +19,12 @@ commands:
         default: 'dev'
     steps:
       - run:
-          name: remove .env file
+          name: Remove .env file
           command: |
             cd apps/backend
             rm -rf .env
       - run:
-          name: generate env variables
+          name: Generate env variables
           command: |
             cd apps/backend
             echo "NODE_ENV=\"${<< parameters.env_type >>}\"" >> .env
@@ -36,6 +36,11 @@ commands:
             echo "DATABASE_USER=\"${<< parameters.stage >>_DATABASE_USER}\"" >> .env
             echo "DATABASE_PASSWORD=\"${<< parameters.stage >>_DATABASE_PASSWORD}\"" >> .env
             echo "DATABASE_DB=\"${<< parameters.stage >>_DATABASE_DB}\"" >> .env
+      - run:
+          name: Print generated .env file
+          command: |
+            cd apps/backend
+            cat .env
 
   backend-app-build-and-push-to-ecr:
     description: 'Build backend app and DB migration images then push to ECR'
@@ -52,8 +57,8 @@ commands:
       - generate-backend-env:
           stage: << parameters.stage >>
           env_type: << parameters.env_type >>
-      - aws-cli/setup:
-          profile_name: default
+      # - aws-cli/setup:
+      #     profile_name: default
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
@@ -80,8 +85,8 @@ commands:
       - generate-backend-env:
           stage: << parameters.stage >>
           env_type: << parameters.env_type >>
-      - aws-cli/setup:
-          profile_name: default
+      # - aws-cli/setup:
+      #     profile_name: default
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
@@ -153,7 +158,6 @@ jobs:
       - image: 'cimg/node:20.17.0'
     resource_class: large
     steps:
-      - run: sh -c env
       - checkout
       - setup_remote_docker:
           docker_layer_caching: false
