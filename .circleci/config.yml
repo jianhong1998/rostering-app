@@ -148,8 +148,8 @@ jobs:
           docker_layer_caching: false
       - backend-app-build-and-push-to-ecr:
           app_repo: serverless-rostering-app-dev
-          stage: DEV
-          env_type: aws-dev
+          stage: 'DEV'
+          env_type: 'aws-dev'
 
   dev-db-migration-build-image:
     docker:
@@ -161,8 +161,8 @@ jobs:
           docker_layer_caching: false
       - db-migration-build-and-push-to-ecr:
           db_migration_repo: rostering-app-dev-migration
-          stage: DEV
-          env_type: aws-dev
+          stage: 'DEV'
+          env_type: 'aws-dev'
 
   dev-deploy-backend:
     docker:
