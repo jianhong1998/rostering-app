@@ -4,6 +4,7 @@ orbs:
   node: circleci/node@6.1.0
   aws-ecr: circleci/aws-ecr@9.3
   aws-cli: circleci/aws-cli@5.1
+  aws-s3: circleci/aws-s3@4.0
   aws-sg-white-list-circleci-ip: inokappa/aws-sg-white-list-circleci-ip@0.0.3
 
 commands:
@@ -64,6 +65,37 @@ commands:
           dockerfile: Dockerfile
           extra_build_args: --provenance=false
 
+  deploy-frontend:
+    parameters:
+      s3_bucket:
+        type: string
+        description: 'S3 bucket name for web hosting'
+      backend_url:
+        type: string
+        description: 'Backend URL'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./apps/frontend
+      - node/install-packages
+      - run:
+          name: Prepare .env File
+          command: |
+            echo VITE_BACKEND_URL=\"<< parameters.backend_url >>\" >>> .env
+      - run:
+          name: Print Generated .env File
+          command: cat .env
+      - run:
+          name: Build
+          command: npm run build
+      - aws-cli/install
+      - aws-s3/sync:
+          from: ./dist
+          to: 's3://<< parameters.s3_bucket >>/'
+          auth:
+            - aws-cli/setup:
+              profile_name: default
+
 jobs:
   dev-build-image:
     docker:
@@ -112,6 +144,15 @@ jobs:
             cd apps/backend
             sls deploy --stage dev --verbose
 
+  dev-deploy-frontend:
+    docker:
+      - image: cimg/node:20.17.0
+    resource_class: medium
+    steps:
+      - deploy-frontend:
+          s3_bucket: 'rostering-web'
+          backend_url: 'https://dev.api.rostering.jianhong.link'
+
 workflows:
   deployment:
     jobs:
@@ -135,3 +176,11 @@ workflows:
                 - cicd-setup
           requires:
             - dev-build-image
+      - dev-deploy-frontend:
+          context:
+            - aws-role-secret
+          filters:
+            branches:
+              only:
+                - master
+                - cicd-setup
