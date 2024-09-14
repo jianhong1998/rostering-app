@@ -5,7 +5,6 @@ orbs:
   aws-ecr: circleci/aws-ecr@9.3
   aws-cli: circleci/aws-cli@5.1
   aws-s3: circleci/aws-s3@4.0
-  aws-sg-white-list-circleci-ip: inokappa/aws-sg-white-list-circleci-ip@0.0.3
 
 commands:
   generate-backend-env:

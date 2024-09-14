@@ -1,5 +1,9 @@
 PROJECT_NAME = "rostering-app"
 
+up:
+	@docker compose \
+		-p ${PROJECT_NAME} \
+		up -w
 
 up/build:
 	@docker compose \

@@ -1,4 +1,13 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
+import { AccountModel } from './account.model';
 
 @Entity('user')
 export class UserModel extends BaseEntity {
@@ -6,44 +15,35 @@ export class UserModel extends BaseEntity {
     type: 'uuid',
     nullable: false,
   })
-  id: string;
+  uuid: string;
 
   @Column({
     type: 'varchar',
     nullable: false,
+    name: 'full_name',
   })
   fullName: string;
 
   @Column({
-    type: 'varchar',
-    nullable: false,
-    length: 30,
-    unique: true,
-  })
-  username: string;
-
-  @Column({
-    type: 'varchar',
-    nullable: false,
-  })
-  hashedPassword: string;
-
-  @Column({
-    type: 'varchar',
-    nullable: false,
-    unique: true,
-  })
-  email: string;
-
-  @Column({
     type: 'integer',
     nullable: false,
+    name: 'phone_number',
   })
   phoneNumber: number;
 
   @Column({
     type: 'integer',
     nullable: false,
+    name: 'phone_country_code',
   })
   phoneCountryCode: number;
+
+  @DeleteDateColumn({
+    name: 'deleted_at',
+  })
+  deletedAt: Date | null;
+
+  @OneToOne(() => AccountModel, { lazy: true })
+  @JoinColumn()
+  account?: AccountModel;
 }

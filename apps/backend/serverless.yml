@@ -46,3 +46,18 @@ functions:
     #   VERSION: ${param:VERSION}
   db-migration:
     image: db-migration-image
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - aws.lambda
+            detail-type:
+              - AWS API Call via CloudTrail
+            detail:
+              eventSource:
+                - lambda.amazonaws.com
+              eventName:
+                - UpdateFunctionCode20150331v2
+              requestParameters:
+                functionName:
+                  - rostering-app-dev-db-migration
