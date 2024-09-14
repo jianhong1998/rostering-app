@@ -37,12 +37,10 @@ commands:
             echo "DATABASE_PASSWORD=\"${<< parameters.stage >>_DATABASE_PASSWORD}\"" >> .env
             echo "DATABASE_DB=\"${<< parameters.stage >>_DATABASE_DB}\"" >> .env
 
-  build-and-push-to-ecr:
+  backend-app-build-and-push-to-ecr:
     description: 'Build backend app and DB migration images then push to ECR'
     parameters:
       app_repo:
-        type: string
-      db_migration_repo:
         type: string
       stage:
         type: string
@@ -66,6 +64,24 @@ commands:
           path: ~/project/apps/backend
           dockerfile: Dockerfile
           extra_build_args: --provenance=false
+
+  db-migration-build-and-push-to-ecr:
+    description: 'Build backend app and DB migration images then push to ECR'
+    parameters:
+      db_migration_repo:
+        type: string
+      stage:
+        type: string
+        default: 'DEV'
+      env_type:
+        type: string
+        default: 'dev'
+    steps:
+      - generate-backend-env:
+          stage: << parameters.stage >>
+          env_type: << parameters.env_type >>
+      - aws-cli/setup:
+          profile_name: default
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
@@ -127,9 +143,22 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: false
-      - build-and-push-to-ecr:
+      - backend-app-build-and-push-to-ecr:
           app_repo: serverless-rostering-app-dev
-          db_migration_repo: rostering-app-dev-migration
+          stage: DEV
+          env_type: dev
+
+  dev-db-migration-build-image:
+    docker:
+      - image: 'cimg/node:20.17.0'
+    resource_class: large
+    steps:
+      - run: sh -c env
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - db-migration-build-and-push-to-ecr:
+          db_migration_repo: serverless-rostering-app-dev
           stage: DEV
           env_type: dev
 
@@ -203,6 +232,17 @@ workflows:
               only:
                 - master
                 - cicd-setup
+      - dev-db-migration-build-image:
+          context:
+            - common-database-secret
+            - aws-role-secret
+          requires:
+            - approve-dev-backend-deploy
+          filters:
+            branches:
+              only:
+                - master
+                - cicd-setup
       - dev-deploy-backend:
           context:
             - serverless-deploy-secret
@@ -214,6 +254,7 @@ workflows:
                 - cicd-setup
           requires:
             - dev-backend-build-image
+            - dev-db-migration-build-image
       - dev-deploy-frontend:
           context:
             - aws-role-secret
