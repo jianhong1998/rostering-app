@@ -38,9 +38,11 @@ commands:
             echo "DATABASE_DB=\"${<< parameters.stage >>_DATABASE_DB}\"" >> .env
 
   build-and-push-to-ecr:
-    description: 'Build image and push to ECR'
+    description: 'Build backend app and DB migration images then push to ECR'
     parameters:
-      repo:
+      app_repo:
+        type: string
+      db_migration_repo:
         type: string
       stage:
         type: string
@@ -58,11 +60,21 @@ commands:
           auth:
             - aws-cli/setup:
                 profile_name: default
-          repo: << parameters.repo >>
+          repo: << parameters.app_repo >>
           tag: latest
           build_path: ~/project/apps/backend
           path: ~/project/apps/backend
           dockerfile: Dockerfile
+          extra_build_args: --provenance=false
+      - aws-ecr/build_and_push_image:
+          auth:
+            - aws-cli/setup:
+                profile_name: default
+          repo: << parameters.db_migration_repo >>
+          tag: latest
+          build_path: ~/project/apps/backend
+          path: ~/project/apps/backend
+          dockerfile: Dockerfile.migration
           extra_build_args: --provenance=false
 
   deploy-frontend:
@@ -106,7 +118,7 @@ commands:
           to: 's3://<< parameters.s3_bucket >>/'
 
 jobs:
-  dev-build-image:
+  dev-backend-build-image:
     docker:
       - image: 'cimg/node:20.17.0'
     resource_class: large
@@ -116,7 +128,8 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: false
       - build-and-push-to-ecr:
-          repo: serverless-rostering-app-dev
+          app_repo: serverless-rostering-app-dev
+          db_migration_repo: rostering-app-dev-migration
           stage: DEV
           env_type: dev
 
@@ -179,7 +192,7 @@ workflows:
               only:
                 - master
                 - cicd-setup
-      - dev-build-image:
+      - dev-backend-build-image:
           context:
             - common-database-secret
             - aws-role-secret
