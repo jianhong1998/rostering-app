@@ -11,7 +11,10 @@ RUN apt-get update && \
     make \
     cmake \
     unzip \
-    libcurl4-openssl-dev
+    libcurl4-openssl-dev \
+    autoconf \
+    libtool \
+    m4
 
 COPY package*.json .
 RUN npm ci --omit=dev
