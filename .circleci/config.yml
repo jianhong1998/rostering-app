@@ -24,7 +24,7 @@ commands:
           name: Generate env variables
           command: |
             cd apps/backend
-            echo "NODE_ENV=\"${<< parameters.env_type >>}\"" >> .env
+            echo "NODE_ENV=\"<< parameters.env_type >>\"" >> .env
             echo "BUILD_MODE=\"swc\"" >> .env
             echo "VERSION=${<< parameters.stage >>_VERSION}" >> .env
             echo "DATABASE_HOST=\"${<< parameters.stage >>_DATABASE_HOST}\"" >> .env
@@ -48,13 +48,10 @@ commands:
         default: 'DEV'
       env_type:
         type: string
-        default: 'dev'
     steps:
       - generate-backend-env:
           stage: << parameters.stage >>
           env_type: << parameters.env_type >>
-      # - aws-cli/setup:
-      #     profile_name: default
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
@@ -76,13 +73,10 @@ commands:
         default: 'DEV'
       env_type:
         type: string
-        default: 'dev'
     steps:
       - generate-backend-env:
           stage: << parameters.stage >>
           env_type: << parameters.env_type >>
-      # - aws-cli/setup:
-      #     profile_name: default
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
