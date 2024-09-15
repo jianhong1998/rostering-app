@@ -207,14 +207,12 @@ workflows:
             branches:
               only:
                 - master
-                - cicd-setup
       - approve-dev-frontend-deploy:
           type: approval
           filters:
             branches:
               only:
                 - master
-                - cicd-setup
       - dev-backend-build-image:
           context:
             - common-database-secret
@@ -225,7 +223,6 @@ workflows:
             branches:
               only:
                 - master
-                - cicd-setup
       - dev-db-migration-build-image:
           context:
             - common-database-secret
@@ -236,7 +233,6 @@ workflows:
             branches:
               only:
                 - master
-                - cicd-setup
       - dev-deploy-backend:
           context:
             - serverless-deploy-secret
@@ -245,7 +241,6 @@ workflows:
             branches:
               only:
                 - master
-                - cicd-setup
           requires:
             - dev-backend-build-image
             - dev-db-migration-build-image
@@ -258,4 +253,3 @@ workflows:
             branches:
               only:
                 - master
-                - cicd-setup
