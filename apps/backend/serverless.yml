@@ -57,7 +57,8 @@ functions:
               eventSource:
                 - lambda.amazonaws.com
               eventName:
-                - UpdateFunctionCode20150331v2
+                - anything-but:
+                    - UpdateFunctionCode
               requestParameters:
                 functionName:
                   - rostering-app-dev-db-migration
