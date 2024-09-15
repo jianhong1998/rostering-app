@@ -42,5 +42,6 @@ COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
 COPY --from=db-migrate-build /usr/apps/backend/.env ./
 COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
-ENTRYPOINT [ "/usr/local/bin/npx", "aws-lambda-ric" ]
-CMD ["npm", "run", "migration:run"]
+ENTRYPOINT [ "npm", "run", "migration:run" ]
+# ENTRYPOINT [ "/usr/local/bin/npx", "aws-lambda-ric" ]
+# CMD ["npm", "run", "migration:run"]
