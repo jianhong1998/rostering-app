@@ -1,27 +1,16 @@
 # =======================================================
 # Install Stage
 # =======================================================
-FROM --platform=linux/arm64 node:20.15.1 AS install
-# FROM node:20-buster AS install
+FROM --platform=linux/arm64 node:20.15.1-slim AS install
 WORKDIR /usr/apps/backend
-
-# RUN apt-get update && \
-#     apt-get install -y \
-#     g++ \
-#     make \
-#     cmake \
-#     unzip \
-#     libcurl4-openssl-dev
 
 COPY package*.json .
 RUN npm ci --omit=dev
-# RUN npm i aws-lambda-ric
 
 # =======================================================
 # Build Stage
 # =======================================================
-FROM --platform=linux/arm64 node:20.15.1 AS db-migrate-build
-# FROM node:20-buster AS db-migrate-build
+FROM --platform=linux/arm64 node:20.15.1-slim AS db-migrate-build
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
@@ -34,8 +23,6 @@ RUN npm run build
 # DB Migrate Final Stage
 # =======================================================
 FROM --platform=linux/arm64 node:20.15.1-slim
-# FROM node:20-buster-slim
-# WORKDIR ${LAMBDA_TASK_ROOT}
 WORKDIR /usr/apps/db_migration
 
 ENV NPM_CONFIG_CACHE=/tmp/.npm
