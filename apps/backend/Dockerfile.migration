@@ -23,7 +23,8 @@ RUN npm run build
 # DB Migrate Final Stage
 # =======================================================
 FROM node:20.15.1-slim
-WORKDIR /usr/apps/backend
+# FROM public.ecr.aws/lambda/nodejs:20.15.1-slim
+WORKDIR ${LAMBDA_TASK_ROOT}
 
 COPY --from=install /usr/apps/backend/node_modules ./node_modules
 COPY --from=db-migrate-build /usr/apps/backend/dist ./dist
@@ -31,4 +32,6 @@ COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
 COPY --from=db-migrate-build /usr/apps/backend/.env ./
 COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
-CMD ["npm", "run", "migration:run"]
+ENTRYPOINT [ "npm run migration:run" ]
+# ENTRYPOINT [ "sh", "-c", "npm run migration:run" ]
+# CMD ["npm", "run", "migration:run"]
