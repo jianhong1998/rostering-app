@@ -4,6 +4,8 @@
 FROM node:20.15.1-slim AS build
 WORKDIR /usr/apps/backend
 
+RUN apt-get update && apt-get install -y cmake
+
 COPY package*.json .
 RUN npm ci
 
@@ -15,6 +17,8 @@ RUN npm run build:swc
 # =======================================================
 FROM node:20.15.1-slim AS install
 WORKDIR /usr/apps/backend
+
+RUN apt-get update && apt-get install -y cmake
 
 COPY package*.json .
 RUN npm ci --omit=dev
