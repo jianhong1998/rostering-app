@@ -12,10 +12,8 @@ commands:
     parameters:
       stage:
         type: string
-        default: 'DEV'
       env_type:
         type: string
-        default: 'dev'
     steps:
       - run:
           name: Remove .env file
@@ -149,7 +147,7 @@ jobs:
       - backend-app-build-and-push-to-ecr:
           app_repo: serverless-rostering-app-dev
           stage: 'DEV'
-          env_type: 'aws-dev'
+          env_type: 'awsDev'
 
   dev-db-migration-build-image:
     docker:
@@ -162,7 +160,7 @@ jobs:
       - db-migration-build-and-push-to-ecr:
           db_migration_repo: rostering-app-dev-migration
           stage: 'DEV'
-          env_type: 'aws-dev'
+          env_type: 'awsDev'
 
   dev-deploy-backend:
     docker:
