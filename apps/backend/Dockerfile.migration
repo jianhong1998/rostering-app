@@ -1,7 +1,7 @@
 # =======================================================
 # Install Stage
 # =======================================================
-FROM node:20.15.1-slim AS install
+FROM node:20.15.1-buster AS install
 WORKDIR /usr/apps/backend
 
 # RUN apt-get update && apt-get install -y cmake autoconf libtool m4
@@ -11,10 +11,11 @@ RUN apt-get update && \
     make \
     cmake \
     unzip \
-    libcurl4-openssl-dev \
-    autoconf \
-    libtool \
-    m4
+    libcurl4-openssl-dev
+    # libcurl4-openssl-dev \
+    # autoconf \
+    # libtool \
+    # m4
 
 COPY package*.json .
 RUN npm ci --omit=dev
