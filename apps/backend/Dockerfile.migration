@@ -4,7 +4,6 @@
 FROM node:20-buster AS install
 WORKDIR /usr/apps/backend
 
-# RUN apt-get update && apt-get install -y cmake autoconf libtool m4
 RUN apt-get update && \
     apt-get install -y \
     g++ \
@@ -12,10 +11,6 @@ RUN apt-get update && \
     cmake \
     unzip \
     libcurl4-openssl-dev
-    # libcurl4-openssl-dev \
-    # autoconf \
-    # libtool \
-    # m4
 
 COPY package*.json .
 RUN npm ci --omit=dev
@@ -24,10 +19,8 @@ RUN npm i aws-lambda-ric
 # =======================================================
 # Build Stage
 # =======================================================
-FROM node:20.15.1-slim AS db-migrate-build
+FROM node:20-buster AS db-migrate-build
 WORKDIR /usr/apps/backend
-
-# RUN apt-get update && apt-get install -y cmake autoconf libtool m4
 
 COPY package*.json .
 RUN npm ci
@@ -38,9 +31,10 @@ RUN npm run build
 # =======================================================
 # DB Migrate Final Stage
 # =======================================================
-FROM node:20.15.1-slim
-# FROM public.ecr.aws/lambda/nodejs:20.15.1-slim
+FROM node:20-buster-slim
 WORKDIR ${LAMBDA_TASK_ROOT}
+
+ENV NPM_CONFIG_CACHE=/tmp/.npm
 
 COPY --from=install /usr/apps/backend/node_modules ./node_modules
 COPY --from=db-migrate-build /usr/apps/backend/dist ./dist
