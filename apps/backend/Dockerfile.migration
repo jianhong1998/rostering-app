@@ -4,7 +4,14 @@
 FROM node:20.15.1-slim AS install
 WORKDIR /usr/apps/backend
 
-RUN apt-get update && apt-get install -y cmake autoconf libtool m4
+# RUN apt-get update && apt-get install -y cmake autoconf libtool m4
+RUN apt-get update && \
+    apt-get install -y \
+    g++ \
+    make \
+    cmake \
+    unzip \
+    libcurl4-openssl-dev
 
 COPY package*.json .
 RUN npm ci --omit=dev
