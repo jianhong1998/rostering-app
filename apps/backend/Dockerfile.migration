@@ -1,7 +1,7 @@
 # =======================================================
 # Install Stage
 # =======================================================
-FROM node:20.15.1-buster AS install
+FROM node:20-buster AS install
 WORKDIR /usr/apps/backend
 
 # RUN apt-get update && apt-get install -y cmake autoconf libtool m4
