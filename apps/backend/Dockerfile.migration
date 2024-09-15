@@ -4,10 +4,11 @@
 FROM node:20.15.1-slim AS install
 WORKDIR /usr/apps/backend
 
-RUN apt-get update && apt-get install -y cmake autoconf libtool m4
+# RUN apt-get update && apt-get install -y cmake autoconf libtool m4
 
 COPY package*.json .
 RUN npm ci --omit=dev
+RUN npm i aws-lambda-ric
 
 # =======================================================
 # Build Stage
@@ -15,7 +16,7 @@ RUN npm ci --omit=dev
 FROM node:20.15.1-slim AS db-migrate-build
 WORKDIR /usr/apps/backend
 
-RUN apt-get update && apt-get install -y cmake autoconf libtool m4
+# RUN apt-get update && apt-get install -y cmake autoconf libtool m4
 
 COPY package*.json .
 RUN npm ci
