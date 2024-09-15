@@ -47,5 +47,5 @@ COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 # CMD ["npm", "run", "migration:run"]
 # ENTRYPOINT [ "/usr/local/bin/npm" ]
 # CMD ["migration:run"]
-ENTRYPOINT [ "/usr/local/bin/npm" ]
+ENTRYPOINT [ "npm" ]
 CMD ["run", "migration:run"]
