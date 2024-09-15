@@ -44,5 +44,6 @@ COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
 # ENTRYPOINT [ "/usr/local/bin/npx", "aws-lambda-ric" ]
 # CMD ["npm", "run", "migration:run"]
-ENTRYPOINT [ "/usr/local/bin/npm" ]
-CMD ["migration:run"]
+# ENTRYPOINT [ "/usr/local/bin/npm" ]
+# CMD ["migration:run"]
+ENTRYPOINT ["node", "/usr/local/bin/npm", "run", "migration:run"]
