@@ -5,11 +5,10 @@ app: rostering-app
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: rostering-app
 
-plugins:
-  - serverless-dotenv-plugin
-  # - serverless-offline
+# plugins:
+#   - serverless-dotenv-plugin
 
-useDotenv: true
+# useDotenv: true
 
 provider:
   name: aws
@@ -29,11 +28,10 @@ provider:
       - subnet-09a57e12b5c23444c
   ecr:
     images:
-      base-image:
-        path: .
-        file: Dockerfile
-      ecr-image:
-        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/temp/rostering-app@latest
+      backend-image:
+        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev:latest
+      db-migration-image:
+        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/rostering-app-dev-migration:latest
 
 stages:
   default:
@@ -41,22 +39,26 @@ stages:
 
 functions:
   api:
-    # handler: dist/main.handler
-    image: base-image
+    image: backend-image
     events:
       - httpApi: '*'
     # environment:
     #   VERSION: ${param:VERSION}
-
-package:
-  patterns:
-    - '!node_modules'
-    - '!test'
-    - '!src'
-    - '!.eslintrc*'
-    - '!.prettierrc*'
-    - '!README.md'
-    - '!webpack.config.js'
-    - '!tsconfig*'
-    - '!.gitignore'
-    - '.env'
+  db-migration:
+    image: db-migration-image
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - aws.lambda
+            detail-type:
+              - AWS API Call via CloudTrail
+            detail:
+              eventSource:
+                - lambda.amazonaws.com
+              eventName:
+                - anything-but:
+                    - UpdateFunctionCode
+              requestParameters:
+                functionName:
+                  - rostering-app-dev-db-migration

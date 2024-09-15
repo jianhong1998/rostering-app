@@ -1,5 +1,6 @@
 services:
   postgres:
+    container_name: database
     image: postgres:16.4-alpine3.20
     ports:
       - '5433:5432'
@@ -16,9 +17,52 @@ services:
       retries: 5
 
   backend:
+    container_name: backend-app
     build:
       context: ./apps/backend
       dockerfile: Dockerfile.local
+      target: final
     env_file:
       - ./apps/backend/.env
     network_mode: host
+    depends_on:
+      db-migration-service:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - path: ./apps/backend/src
+          action: rebuild
+        - path: ./apps/backend/.env
+          action: rebuild
+        - path: ./apps/backend/package.json
+          action: rebuild
+
+  db-migration-service:
+    container_name: db-migration
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.local
+      target: db-migrate
+    env_file:
+      - ./apps/backend/.env
+    network_mode: host
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    container_name: frontend-app
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile.local
+    network_mode: host
+    depends_on:
+      db-migration-service:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - path: ./apps/frontend/src
+          action: sync
+          target: /usr/apps/frontend/src
+        - path: ./apps/frontend/package.json
+          action: rebuild

@@ -1,0 +1,36 @@
+# =======================================================
+# Install Stage
+# =======================================================
+FROM --platform=linux/arm64 node:20.15.1-slim AS install
+WORKDIR /usr/apps/backend
+
+COPY package*.json .
+RUN npm ci --omit=dev
+
+# =======================================================
+# Build Stage
+# =======================================================
+FROM --platform=linux/arm64 node:20.15.1-slim AS db-migrate-build
+WORKDIR /usr/apps/backend
+
+COPY package*.json .
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# =======================================================
+# DB Migrate Final Stage
+# =======================================================
+FROM --platform=linux/arm64 node:20.15.1-slim
+WORKDIR /usr/apps/db_migration
+
+ENV NPM_CONFIG_CACHE=/tmp/.npm
+
+COPY --from=install /usr/apps/backend/node_modules ./node_modules
+COPY --from=db-migrate-build /usr/apps/backend/dist ./dist
+COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
+COPY --from=db-migrate-build /usr/apps/backend/.env ./
+COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
+
+CMD ["sh", "-c", "npm run migration:run" ]

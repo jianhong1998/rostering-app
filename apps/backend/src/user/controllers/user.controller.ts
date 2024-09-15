@@ -12,6 +12,9 @@ export class UserController {
 
   @Get('/')
   public async getAllUsers() {
-    return await this.userService.getAll({ entityManager: this.entityManager });
+    return await this.userService.getAll({
+      entityManager: this.entityManager,
+      relation: { account: true },
+    });
   }
 }
