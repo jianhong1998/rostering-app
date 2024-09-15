@@ -1,7 +1,8 @@
 # =======================================================
 # Install Stage
 # =======================================================
-FROM node:20-buster AS install
+FROM node:20.15.1 AS install
+# FROM node:20-buster AS install
 WORKDIR /usr/apps/backend
 
 # RUN apt-get update && \
@@ -19,7 +20,8 @@ RUN npm ci --omit=dev
 # =======================================================
 # Build Stage
 # =======================================================
-FROM node:20-buster AS db-migrate-build
+FROM node:20.15.1 AS db-migrate-build
+# FROM node:20-buster AS db-migrate-build
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
@@ -31,7 +33,8 @@ RUN npm run build
 # =======================================================
 # DB Migrate Final Stage
 # =======================================================
-FROM node:20-buster-slim
+FROM node:20.15.1-slim
+# FROM node:20-buster-slim
 # WORKDIR ${LAMBDA_TASK_ROOT}
 WORKDIR /usr/apps/db_migration
 
@@ -43,10 +46,5 @@ COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
 COPY --from=db-migrate-build /usr/apps/backend/.env ./
 COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
-# ENTRYPOINT [ "/usr/local/bin/npx", "aws-lambda-ric" ]
-# CMD ["npm", "run", "migration:run"]
-# ENTRYPOINT [ "/usr/local/bin/npm" ]
-# CMD ["migration:run"]
-# ENTRYPOINT [ "npm" ]
-# CMD ["run", "migration:run"]
-CMD ["sh", "-c", "npm run migration:run"]
+ENTRYPOINT [ "sh", "-c" ]
+CMD [ "npm run migration:run" ]
