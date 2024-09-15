@@ -32,7 +32,6 @@ export class AppConfig {
         configService.get('JWT_SECRET') ?? randomBytes(16).toString('hex'),
       signOptions: {
         expiresIn: configService.get('JWT_EXPIRE') ?? '15 mins',
-        algorithm: 'ES256',
       },
     }),
   });
