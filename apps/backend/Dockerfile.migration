@@ -1,7 +1,7 @@
 # =======================================================
 # Install Stage
 # =======================================================
-FROM node:20.15.1 AS install
+FROM --platform=linux/arm64 node:20.15.1 AS install
 # FROM node:20-buster AS install
 WORKDIR /usr/apps/backend
 
@@ -20,7 +20,7 @@ RUN npm ci --omit=dev
 # =======================================================
 # Build Stage
 # =======================================================
-FROM node:20.15.1 AS db-migrate-build
+FROM --platform=linux/arm64 node:20.15.1 AS db-migrate-build
 # FROM node:20-buster AS db-migrate-build
 WORKDIR /usr/apps/backend
 
