@@ -33,7 +33,7 @@ RUN npm run build
 # =======================================================
 # DB Migrate Final Stage
 # =======================================================
-FROM node:20.15.1-slim
+FROM --platform=linux/arm64 node:20.15.1-slim
 # FROM node:20-buster-slim
 # WORKDIR ${LAMBDA_TASK_ROOT}
 WORKDIR /usr/apps/db_migration
@@ -46,5 +46,4 @@ COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
 COPY --from=db-migrate-build /usr/apps/backend/.env ./
 COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
-ENTRYPOINT [ "sh", "-c" ]
-CMD [ "npm run migration:run" ]
+CMD ["sh", "-c", "npm run migration:run" ]
