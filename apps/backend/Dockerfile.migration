@@ -4,17 +4,17 @@
 FROM node:20-buster AS install
 WORKDIR /usr/apps/backend
 
-RUN apt-get update && \
-    apt-get install -y \
-    g++ \
-    make \
-    cmake \
-    unzip \
-    libcurl4-openssl-dev
+# RUN apt-get update && \
+#     apt-get install -y \
+#     g++ \
+#     make \
+#     cmake \
+#     unzip \
+#     libcurl4-openssl-dev
 
 COPY package*.json .
 RUN npm ci --omit=dev
-RUN npm i aws-lambda-ric
+# RUN npm i aws-lambda-ric
 
 # =======================================================
 # Build Stage
@@ -43,7 +43,8 @@ COPY --from=db-migrate-build /usr/apps/backend/.env ./
 COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
 
-ENTRYPOINT [ "/usr/local/bin/npm" ]
-CMD ["run migration:run"]
+# ENTRYPOINT [ "/usr/local/bin/npm" ]
+# CMD ["run migration:run"]
 # ENTRYPOINT [ "/usr/local/bin/npx", "aws-lambda-ric" ]
 # CMD ["npm", "run", "migration:run"]
+CMD ["migration:run"]
