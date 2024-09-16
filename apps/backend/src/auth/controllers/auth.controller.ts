@@ -7,7 +7,7 @@ export class AuthController {
   constructor(private readonly tokenUtil: TokenUtil) {}
 
   @Post('/')
-  @Public()
+  // @Public()
   async loggin() {
     const payload = {
       userId: '1234-abcd-5678',

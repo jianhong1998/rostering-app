@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 import { hash, verify } from 'argon2';
@@ -31,21 +31,21 @@ export class TokenUtil {
   ): Promise<boolean> {
     try {
       this.jwtService.verify(token, { ignoreExpiration: false });
-
-      const { verifySecret: secret } = this.decodeToken<
-        T & { verifySecret: string }
-      >(token);
-
-      const isVerifySecretValid = await this.verifySecret({
-        secret,
-        hashedSecret,
-      });
-
-      return isVerifySecretValid;
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
+      Logger.log('Token failed to verify.', 'VerifyToken');
       return false;
     }
+
+    const { verifySecret: secret } = this.decodeToken<
+      T & { verifySecret: string }
+    >(token);
+
+    const isVerifySecretValid = await this.verifySecret({
+      secret,
+      hashedSecret,
+    });
+
+    return isVerifySecretValid;
   }
 
   public decodeToken<T extends object>(token: string): T {
