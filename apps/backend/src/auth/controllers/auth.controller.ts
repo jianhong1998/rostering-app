@@ -1,20 +1,28 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Res } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { TokenUtil } from '../utils/token.util';
+import { Response } from 'express';
+import { randomUUID } from 'crypto';
 
 @Controller('/auth')
 export class AuthController {
   constructor(private readonly tokenUtil: TokenUtil) {}
 
   @Post('/')
-  // @Public()
-  async loggin() {
+  @Public()
+  async loggin(@Res() res: Response) {
     const payload = {
-      userId: '1234-abcd-5678',
+      userId: randomUUID(),
     };
 
     const tokenData = await this.tokenUtil.generateToken(payload);
 
-    return tokenData;
+    res.cookie('token', tokenData.token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+
+    res.send(tokenData);
   }
 }

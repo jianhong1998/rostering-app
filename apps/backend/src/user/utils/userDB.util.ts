@@ -21,7 +21,7 @@ export class UserDBUtil {
     relation?: FindOptionsRelations<UserModel>;
   }): Promise<UserModel | null> {
     const { criterial, entityManager, relation } = params;
-    const repo = entityManager.getRepository(UserModel) ?? this.userRepo;
+    const repo = entityManager?.getRepository(UserModel) ?? this.userRepo;
 
     const user = await repo.findOne({
       where: criterial,
