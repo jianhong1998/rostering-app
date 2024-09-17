@@ -43,7 +43,7 @@ export class UserModel extends BaseEntity {
   })
   deletedAt: Date | null;
 
-  @OneToOne(() => AccountModel, { lazy: true })
+  @OneToOne(() => AccountModel)
   @JoinColumn()
   account?: AccountModel;
 }

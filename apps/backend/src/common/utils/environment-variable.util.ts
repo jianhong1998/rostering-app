@@ -18,6 +18,9 @@ type IEnvironmentVariableList = {
   jwtSecret: string;
   jwtExpire: string;
 
+  // Hashing Related
+  passwordHashSecret: string;
+
   // Feature Flag Related
 };
 
@@ -45,6 +48,9 @@ export class EnvironmentVariableUtil {
       jwtSecret:
         this.configService.get('JWT_SECRET') ?? randomBytes(16).toString('hex'),
       jwtExpire: this.configService.get('JWT_EXPIRE') ?? '15 mins',
+
+      passwordHashSecret:
+        this.configService.get('PASSWORD_HASH_SECRET') ?? 'secret',
     };
 
     return this.environmentVariableList;
