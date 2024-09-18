@@ -2,6 +2,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import DatabaseConfig from './database/database.config';
 import { DataSource } from 'typeorm';
+import { JwtModule } from '@nestjs/jwt';
+import { randomBytes } from 'crypto';
 
 export class AppConfig {
   private constructor() {}
@@ -19,5 +21,18 @@ export class AppConfig {
       DatabaseConfig.getConfig(configService),
     dataSourceFactory: async (options) =>
       await new DataSource(options).initialize(),
+  });
+
+  public static jwtModule = JwtModule.registerAsync({
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    global: true,
+    useFactory: (configService: ConfigService) => ({
+      secret:
+        configService.get('JWT_SECRET') ?? randomBytes(16).toString('hex'),
+      signOptions: {
+        expiresIn: configService.get('JWT_EXPIRE') ?? '15 mins',
+      },
+    }),
   });
 }
