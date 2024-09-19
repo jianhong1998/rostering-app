@@ -7,6 +7,7 @@ import { MessageAttributeDataType } from '../enums/message-attribute-data-type.e
 import { IMessageBody, IQueueMessage } from '../types/queue.type';
 import { QueueUtil } from '../utils/queue.util';
 import { JobType } from '../enums/job-type.enum';
+import { MessageBody } from '../models/message-body.model';
 
 @Injectable()
 export class QueueProducerService {
@@ -16,12 +17,12 @@ export class QueueProducerService {
     private readonly configService: ConfigService,
     private readonly sqsServivce: SqsService,
   ) {
-    const queueUrl = configService.get('SQS_URL') ?? '';
+    const queueUrl = configService.get('AWS_SQS_URL') ?? '';
     this.queueUrl = queueUrl;
   }
 
-  async send(
-    message: string,
+  async sendMessageToQueue<T>(
+    message: T,
     jobType: JobType,
     messageGroupId: MessageGroupId,
   ) {
@@ -30,17 +31,7 @@ export class QueueProducerService {
     }
 
     const messageId = randomUUID();
-    const messageBody: IMessageBody = {
-      date: new Date().toISOString(),
-      messageId,
-      message,
-      messageAttribute: {
-        job: {
-          dataType: 'string',
-          value: jobType,
-        },
-      },
-    };
+    const messageBody = new MessageBody(message, jobType);
     const queueMessage: IQueueMessage = {
       id: messageId,
       queueUrl: this.queueUrl,

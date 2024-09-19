@@ -11,9 +11,9 @@ type IMessageAttribute = {
   job: IQueueJob;
 };
 
-export type IMessageBody = {
+export type IMessageBody<T> = {
   messageId: string;
-  message: string;
+  message: T;
   date: string;
   messageAttribute: IMessageAttribute;
 };

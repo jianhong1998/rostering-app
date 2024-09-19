@@ -1,3 +1,3 @@
 export enum JobType {
-  UPLOAD = 'UPLOAD',
+  EMAIL = 'EMAIL',
 }
