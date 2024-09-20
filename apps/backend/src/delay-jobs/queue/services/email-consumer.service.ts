@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SqsConsumerEventHandler, SqsMessageHandler } from '@ssut/nestjs-sqs';
-// import { QueueName } from '../enums/queue-name.enum';
 import { Message } from '@aws-sdk/client-sqs';
 import { QueueUtil } from '../utils/queue.util';
+import { MessageBody } from '../models/message-body.model';
 
 @Injectable()
 export class EmailQueueConsumerService {
@@ -20,9 +20,18 @@ export class EmailQueueConsumerService {
       );
     }
 
-    const messageBody = JSON.parse(message.Body);
+    const messageBody = JSON.parse(message.Body) as MessageBody<{
+      emailAddress: string;
+      emailMessage: string;
+    }>;
 
-    console.log(messageBody);
+    this.logger.log({
+      messageBody,
+      email: {
+        address: messageBody.message.emailAddress,
+        message: messageBody.message.emailMessage,
+      },
+    });
   }
 
   @SqsConsumerEventHandler(

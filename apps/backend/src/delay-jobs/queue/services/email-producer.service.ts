@@ -4,13 +4,13 @@ import { randomUUID } from 'crypto';
 import { SqsService } from '@ssut/nestjs-sqs';
 import { MessageGroupId } from '../enums/message-group-id.enum';
 import { MessageAttributeDataType } from '../enums/message-attribute-data-type.enum';
-import { IMessageBody, IQueueMessage } from '../types/queue.type';
+import { IQueueMessage } from '../types/queue.type';
 import { QueueUtil } from '../utils/queue.util';
 import { JobType } from '../enums/job-type.enum';
 import { MessageBody } from '../models/message-body.model';
 
 @Injectable()
-export class QueueProducerService {
+export class EmailQueueProducerService {
   private queueUrl: string;
 
   constructor(

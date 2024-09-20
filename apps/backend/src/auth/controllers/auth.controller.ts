@@ -5,6 +5,7 @@ import { Response } from 'express';
 import { UserDBUtil } from 'src/user/utils/userDB.util';
 import { randomUUID } from 'crypto';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
+import { AuthService } from '../services/auth.service';
 
 @Controller('/auth')
 export class AuthController {
@@ -12,6 +13,7 @@ export class AuthController {
     private readonly tokenUtil: TokenUtil,
     private readonly userDbUtil: UserDBUtil,
     private readonly envVarUtil: EnvironmentVariableUtil,
+    private readonly authService: AuthService,
   ) {}
 
   @Post('/')
@@ -30,6 +32,8 @@ export class AuthController {
     };
 
     const tokenData = await this.tokenUtil.generateToken(payload);
+
+    await this.authService.login();
 
     res.cookie('token', tokenData.token, {
       httpOnly: true,
