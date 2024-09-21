@@ -30,4 +30,4 @@ functions:
     events:
       - sqs:
           arn: ${env:SERVERLESS_SQS_ARN}
-      # - httpApi: '*'
+      - httpApi: '*'

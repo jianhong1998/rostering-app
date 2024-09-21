@@ -36,6 +36,11 @@ services:
           action: rebuild
         - path: ./apps/backend/package.json
           action: rebuild
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sS http://localhost:3001/version || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db-migration-service:
     container_name: db-migration
@@ -62,6 +67,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sS http://localhost:3005/version || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     container_name: frontend-app

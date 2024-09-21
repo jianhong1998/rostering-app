@@ -8,7 +8,6 @@ import { AuthGuardService } from './auth/services/auth-guard.service';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { QueueProducerModule } from './delay-jobs/queue/producer.module';
-import { QueueConsumerModule } from './delay-jobs/queue/consumer.module';
 
 @Module({
   imports: [
@@ -20,7 +19,6 @@ import { QueueConsumerModule } from './delay-jobs/queue/consumer.module';
     UserModule,
     AuthModule,
     QueueProducerModule,
-    QueueConsumerModule,
   ],
   controllers: [AppController],
   providers: [
