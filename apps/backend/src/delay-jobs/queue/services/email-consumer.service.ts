@@ -14,6 +14,9 @@ export class EmailQueueConsumerService {
 
   @SqsMessageHandler(QueueUtil.getQueueNames().emailQueue, false)
   async messageHandler(message: Message) {
+    this.logger.log('Service Running', 'QueueMessage');
+    console.log('Service Running');
+
     if (!message.Body) {
       this.logger.error(
         `Message body not found for message ${message.MessageId}`,

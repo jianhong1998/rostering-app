@@ -1,4 +1,4 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Public } from './common/decorators';
 import { EnvironmentVariableUtil } from './common/utils/environment-variable.util';
@@ -19,10 +19,6 @@ export class AppController {
   @Get('/version')
   @Public()
   async checkVersion(): Promise<{ version: string }> {
-    /**@todo remove*/
-    Logger.log({
-      envVar: this.envVarUtil.getVariables(),
-    });
     return await this.appService.getVersion();
   }
 }

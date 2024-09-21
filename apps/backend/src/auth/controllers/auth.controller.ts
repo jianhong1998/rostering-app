@@ -21,9 +21,6 @@ export class AuthController {
   async loggin(@Res() res: Response) {
     /**@todo remove*/
     console.log('Found API');
-    console.log({
-      envVariables: this.envVarUtil.getVariables(),
-    });
 
     const users = await this.userDbUtil.getAll({
       relation: {
