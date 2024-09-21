@@ -68,4 +68,19 @@ functions:
     image: delay-job-image
     events:
       - sqs:
-        arn: ${env:SERVERLESS_SQS_ARN}
+          arn: ${env:SERVERLESS_SQS_ARN}
+      - eventBridge:
+          pattern:
+            source:
+              - aws.lambda
+            detail-type:
+              - AWS API Call via CloudTrail
+            detail:
+              eventSource:
+                - lambda.amazonaws.com
+              eventName:
+                - anything-but:
+                    - UpdateFunctionCode
+              requestParameters:
+                functionName:
+                  - rostering-app-dev-delay-job
