@@ -44,8 +44,8 @@ functions:
     image: backend-image
     events:
       - httpApi: '*'
-    # environment:
-    #   VERSION: ${param:VERSION}
+    environment:
+      VERSION: ${env:VERSION}
   db-migration:
     image: db-migration-image
     events:
