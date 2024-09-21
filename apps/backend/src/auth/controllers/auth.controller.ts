@@ -19,6 +19,12 @@ export class AuthController {
   @Post('/')
   @Public()
   async loggin(@Res() res: Response) {
+    /**@todo remove*/
+    console.log('Found API');
+    console.log({
+      envVariables: this.envVarUtil.getVariables(),
+    });
+
     const users = await this.userDbUtil.getAll({
       relation: {
         account: false,
@@ -32,11 +38,6 @@ export class AuthController {
     };
 
     const tokenData = await this.tokenUtil.generateToken(payload);
-
-    /**@todo remove*/
-    console.log({
-      envVariables: this.envVarUtil.getVariables(),
-    });
 
     await this.authService.login();
 
