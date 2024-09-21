@@ -6,8 +6,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
 import { SqsModule } from '@ssut/nestjs-sqs';
 import {
-  SqsProducerOptions,
   SqsConsumerOptions,
+  SqsProducerOptions,
 } from '@ssut/nestjs-sqs/dist/sqs.types';
 import { QueueUtil } from './delay-jobs/queue/utils/queue.util';
 import { CommonModule } from './common/common.module';
@@ -44,7 +44,7 @@ export class AppConfig {
     }),
   });
 
-  public static sqsModule = SqsModule.registerAsync({
+  public static sqsProducerModule = SqsModule.registerAsync({
     imports: [CommonModule],
     inject: [EnvironmentVariableUtil],
     useFactory: (envVarUtil: EnvironmentVariableUtil) => {
@@ -62,6 +62,22 @@ export class AppConfig {
         }),
       );
 
+      return {
+        producers,
+      };
+    },
+  });
+
+  public static sqsConsumerModule = SqsModule.registerAsync({
+    imports: [CommonModule],
+    inject: [EnvironmentVariableUtil],
+    useFactory: (envVarUtil: EnvironmentVariableUtil) => {
+      const envVars = envVarUtil.getVariables();
+
+      const queueUrl = envVars.sqsUrl;
+      const region = envVars.awsRegion;
+      const queueNames = QueueUtil.getQueueNames();
+
       const consumers = Object.entries(queueNames).map(
         ([_, value]): SqsConsumerOptions => ({
           name: value,
@@ -73,7 +89,6 @@ export class AppConfig {
 
       return {
         consumers,
-        producers,
       };
     },
   });

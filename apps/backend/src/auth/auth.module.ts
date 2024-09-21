@@ -5,10 +5,10 @@ import { UserModule } from 'src/user/user.module';
 import { AuthController } from './controllers/auth.controller';
 import { CommonModule } from 'src/common/common.module';
 import { AuthService } from './services/auth.service';
-import { QueueProviderModule } from 'src/delay-jobs/queue/producer.module';
+import { QueueProducerModule } from 'src/delay-jobs/queue/producer.module';
 
 @Module({
-  imports: [UserModule, CommonModule, QueueProviderModule],
+  imports: [UserModule, CommonModule, QueueProducerModule],
   providers: [TokenUtil, AuthGuardService, AuthService],
   controllers: [AuthController],
   exports: [TokenUtil, AuthGuardService],

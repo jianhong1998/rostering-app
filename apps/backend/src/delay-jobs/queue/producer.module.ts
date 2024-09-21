@@ -9,4 +9,4 @@ import { EmailQueueProducerService } from './services/email-producer.service';
   providers: [sqsProvider, EmailQueueProducerService],
   exports: [sqsProvider, EmailQueueProducerService],
 })
-export class QueueProviderModule {}
+export class QueueProducerModule {}

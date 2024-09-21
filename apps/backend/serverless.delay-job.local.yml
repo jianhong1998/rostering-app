@@ -24,14 +24,10 @@ stages:
     observability: false
 
 functions:
-  api:
-    handler: dist/main.handler
-    events:
-      - httpApi: '*'
-    # environment:
-    #   VERSION: ${param:VERSION}
   delay-job:
+    name: ${env:NODE_ENV}-delay-job
     handler: dist/delay-job.handler
     events:
       - sqs:
           arn: ${env:SERVERLESS_SQS_ARN}
+      # - httpApi: '*'

@@ -21,13 +21,13 @@ services:
     build:
       context: ./apps/backend
       dockerfile: Dockerfile.local
-      target: final
+      target: backend
     env_file:
       - ./apps/backend/.env
     network_mode: host
     depends_on:
-      db-migration-service:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
     develop:
       watch:
         - path: ./apps/backend/src
@@ -43,6 +43,19 @@ services:
       context: ./apps/backend
       dockerfile: Dockerfile.local
       target: db-migrate
+    env_file:
+      - ./apps/backend/.env
+    network_mode: host
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  delay-job:
+    container_name: delay-job
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.local
+      target: delay-job
     env_file:
       - ./apps/backend/.env
     network_mode: host

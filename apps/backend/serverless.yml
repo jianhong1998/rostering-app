@@ -32,6 +32,8 @@ provider:
         uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev:latest
       db-migration-image:
         uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/rostering-app-dev-migration:latest
+      delay-job-image:
+        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/rostering-app-dev-delay-job:latest
 
 stages:
   default:
@@ -62,3 +64,8 @@ functions:
               requestParameters:
                 functionName:
                   - rostering-app-dev-db-migration
+  delay-job:
+    image: delay-job-image
+    events:
+      - sqs:
+        arn: ${env:SERVERLESS_SQS_ARN}

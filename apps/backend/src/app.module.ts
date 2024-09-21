@@ -7,20 +7,20 @@ import { CommonModule } from './common/common.module';
 import { AuthGuardService } from './auth/services/auth-guard.service';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
+import { QueueProducerModule } from './delay-jobs/queue/producer.module';
 import { QueueConsumerModule } from './delay-jobs/queue/consumer.module';
-import { QueueProviderModule } from './delay-jobs/queue/producer.module';
 
 @Module({
   imports: [
     AppConfig.configModule,
     AppConfig.typeormModule,
     AppConfig.jwtModule,
-    AppConfig.sqsModule,
+    AppConfig.sqsProducerModule,
     CommonModule,
     UserModule,
     AuthModule,
+    QueueProducerModule,
     QueueConsumerModule,
-    QueueProviderModule,
   ],
   controllers: [AppController],
   providers: [
