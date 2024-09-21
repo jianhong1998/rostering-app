@@ -33,6 +33,11 @@ export class AuthController {
 
     const tokenData = await this.tokenUtil.generateToken(payload);
 
+    /**@todo remove*/
+    console.log({
+      envVariables: this.envVarUtil.getVariables(),
+    });
+
     await this.authService.login();
 
     res.cookie('token', tokenData.token, {
