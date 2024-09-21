@@ -37,6 +37,7 @@ commands:
             echo "PASSWORD_HASH_SECRET=\"${<< parameters.stage >>_PASSWORD_HASH_SECRET}\"" >> .env
             echo "SQS_NAME_EMAIL=\"${<< parameters.stage >>_SQS_NAME_EMAIL}\"" >> .env
             echo "SERVERLESS_SQS_ARN=\"${<< parameters.stage >>_SERVERLESS_SQS_ARN}\"" >> .env
+            echo "AWS_SQS_URL=\"${<< parameters.stage >>_AWS_SQS_URL}\"" >> .env
       - run:
           name: Print generated .env file
           command: |
