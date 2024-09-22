@@ -4,7 +4,6 @@ import serverlessExpress from '@codegenie/serverless-express';
 import { Handler } from 'aws-lambda';
 import cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from '@nestjs/common';
 
 let server: Handler;
 
@@ -22,8 +21,6 @@ async function bootstrap() {
 
 export const handler: Handler = async (event, context, callback) => {
   server = server ?? (await bootstrap());
-
-  Logger.log(JSON.stringify({ event }), 'EventValue');
 
   return server(event, context, callback);
 };

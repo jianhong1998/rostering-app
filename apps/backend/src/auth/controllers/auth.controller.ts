@@ -1,4 +1,4 @@
-import { Controller, Post, Res } from '@nestjs/common';
+import { Controller, Logger, Post, Res } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { TokenUtil } from '../utils/token.util';
 import { Response } from 'express';
@@ -18,15 +18,14 @@ export class AuthController {
 
   @Post('/')
   @Public()
-  async loggin(@Res() res: Response) {
-    /**@todo remove*/
-    console.log('Found API');
-
+  async login(@Res() res: Response) {
+    Logger.log('Before userDbUtil.getAll()', 'LoginFunction');
     const users = await this.userDbUtil.getAll({
       relation: {
         account: false,
       },
     });
+    Logger.log('After userDbUtil.getAll()', 'LoginFunction');
 
     const randomUser = users[0];
 
@@ -34,9 +33,13 @@ export class AuthController {
       userId: randomUser?.uuid ?? randomUUID(),
     };
 
+    Logger.log('Before tokenUtil.generateToken()', 'LoginFunction');
     const tokenData = await this.tokenUtil.generateToken(payload);
+    Logger.log('After tokenUtil.generateToken()', 'LoginFunction');
 
+    Logger.log('Before authService.login()', 'LoginFunction');
     await this.authService.login();
+    Logger.log('After authService.login()', 'LoginFunction');
 
     res.cookie('token', tokenData.token, {
       httpOnly: true,
