@@ -51,7 +51,7 @@ export class AppConfig {
       const envVars = envVarUtil.getVariables();
 
       const queueUrl = envVars.sqsUrl;
-      const region = envVars.awsRegion;
+      const region = envVars.sqsAwsRegion;
       const queueNames = QueueUtil.getQueueNames();
 
       const producers = Object.entries(queueNames).map(
@@ -75,7 +75,7 @@ export class AppConfig {
       const envVars = envVarUtil.getVariables();
 
       const queueUrl = envVars.sqsUrl;
-      const region = envVars.awsRegion;
+      const region = envVars.sqsAwsRegion;
       const queueNames = QueueUtil.getQueueNames();
 
       const consumers = Object.entries(queueNames).map(
