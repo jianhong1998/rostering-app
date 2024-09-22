@@ -298,6 +298,7 @@ workflows:
           context:
             - serverless-deploy-secret
             - common-database-secret
+            - rostering-dev-aws-secret
           filters:
             branches:
               only:
