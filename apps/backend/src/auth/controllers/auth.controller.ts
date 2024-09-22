@@ -19,13 +19,11 @@ export class AuthController {
   @Post('/')
   @Public()
   async login(@Res() res: Response) {
-    Logger.log('Before userDbUtil.getAll()', 'LoginFunction');
     const users = await this.userDbUtil.getAll({
       relation: {
         account: false,
       },
     });
-    Logger.log('After userDbUtil.getAll()', 'LoginFunction');
 
     const randomUser = users[0];
 
@@ -33,20 +31,11 @@ export class AuthController {
       userId: randomUser?.uuid ?? randomUUID(),
     };
 
-    Logger.log('Before tokenUtil.generateToken()', 'LoginFunction');
     const tokenData = await this.tokenUtil.generateToken(payload);
-    Logger.log('After tokenUtil.generateToken()', 'LoginFunction');
 
-    Logger.log('Before authService.login()', 'LoginFunction');
-    this.authService
-      .login()
-      .then(() => {
-        Logger.log('Sent message to email queue', 'LoginFunction');
-      })
-      .catch((e) => {
-        Logger.error(e);
-      });
-    Logger.log('After authService.login()', 'LoginFunction');
+    Logger.log('Sending queue message to email queue...', 'LoginFunction');
+    await this.authService.login();
+    Logger.log('Queue message is sent to email queue', 'LoginFunction');
 
     res.cookie('token', tokenData.token, {
       httpOnly: true,
