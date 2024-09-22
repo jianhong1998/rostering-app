@@ -7,7 +7,7 @@ import { randomUUID } from 'crypto';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 import { AuthService } from '../services/auth.service';
 
-@Controller('/auth')
+@Controller('/login')
 export class AuthController {
   constructor(
     private readonly tokenUtil: TokenUtil,
