@@ -23,7 +23,7 @@ async function bootstrap() {
 export const handler: Handler = async (event, context, callback) => {
   server = server ?? (await bootstrap());
 
-  Logger.log({ event });
+  Logger.log(JSON.stringify({ event }), 'EventValue');
 
   return server(event, context, callback);
 };
