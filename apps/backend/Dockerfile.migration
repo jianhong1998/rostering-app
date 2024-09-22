@@ -1,7 +1,7 @@
 # =======================================================
 # Install Stage
 # =======================================================
-FROM --platform=linux/arm64 node:20.15.1-slim AS install
+FROM node:20.15.1-slim AS install
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
@@ -10,7 +10,7 @@ RUN npm ci --omit=dev
 # =======================================================
 # Build Stage
 # =======================================================
-FROM --platform=linux/arm64 node:20.15.1-slim AS db-migrate-build
+FROM node:20.15.1-slim AS db-migrate-build
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
