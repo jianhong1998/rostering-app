@@ -38,7 +38,14 @@ export class AuthController {
     Logger.log('After tokenUtil.generateToken()', 'LoginFunction');
 
     Logger.log('Before authService.login()', 'LoginFunction');
-    await this.authService.login();
+    this.authService
+      .login()
+      .then(() => {
+        Logger.log('Sent message to email queue', 'LoginFunction');
+      })
+      .catch((e) => {
+        Logger.error(e);
+      });
     Logger.log('After authService.login()', 'LoginFunction');
 
     res.cookie('token', tokenData.token, {
