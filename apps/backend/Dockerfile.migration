@@ -29,8 +29,8 @@ ENV NPM_CONFIG_CACHE=/tmp/.npm
 
 COPY --from=install /usr/apps/backend/node_modules ./node_modules
 COPY --from=db-migrate-build /usr/apps/backend/dist ./dist
-COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
-COPY --from=db-migrate-build /usr/apps/backend/.env ./
+# COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
+# COPY --from=db-migrate-build /usr/apps/backend/.env ./
 COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
 CMD ["sh", "-c", "npm run migration:run" ]

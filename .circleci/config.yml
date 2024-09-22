@@ -55,9 +55,9 @@ commands:
       env_type:
         type: string
     steps:
-      - generate-backend-env:
-          stage: << parameters.stage >>
-          env_type: << parameters.env_type >>
+      # - generate-backend-env:
+      #     stage: << parameters.stage >>
+      #     env_type: << parameters.env_type >>
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
@@ -80,9 +80,9 @@ commands:
       env_type:
         type: string
     steps:
-      - generate-backend-env:
-          stage: << parameters.stage >>
-          env_type: << parameters.env_type >>
+      # - generate-backend-env:
+      #     stage: << parameters.stage >>
+      #     env_type: << parameters.env_type >>
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
@@ -105,9 +105,9 @@ commands:
       env_type:
         type: string
     steps:
-      - generate-backend-env:
-          stage: << parameters.stage >>
-          env_type: << parameters.env_type >>
+      # - generate-backend-env:
+      #     stage: << parameters.stage >>
+      #     env_type: << parameters.env_type >>
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:

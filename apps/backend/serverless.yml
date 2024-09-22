@@ -46,6 +46,21 @@ functions:
       - httpApi: '*'
     environment:
       VERSION: ${env:VERSION}
+      NODE_ENV: ${env:NODE_ENV}
+      BUILD_MODE: ${env:BUILD_MODE}
+      JWT_SECRET: ${env:JWT_SECRET}
+      JWT_EXPIRE: ${env:JWT_EXPIRE}
+      PASSWORD_HASH_SECRET: ${env:PASSWORD_HASH_SECRET}
+      SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
+      AWS_REGION: ${env:AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
+      AWS_SQS_URL: ${env:AWS_SQS_URL}
+      DATABASE_HOST: ${env:DATABASE_HOST}
+      DATABASE_PORT: ${env:DATABASE_PORT}
+      DATABASE_USER: ${env:DATABASE_USER}
+      DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
+      DATABASE_DB: ${env:DATABASE_DB}
   db-migration:
     image: db-migration-image
     events:
@@ -64,6 +79,14 @@ functions:
               requestParameters:
                 functionName:
                   - rostering-app-dev-db-migration
+    environment:
+      VERSION: ${env:VERSION}
+      NODE_ENV: ${env:NODE_ENV}
+      DATABASE_HOST: ${env:DATABASE_HOST}
+      DATABASE_PORT: ${env:DATABASE_PORT}
+      DATABASE_USER: ${env:DATABASE_USER}
+      DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
+      DATABASE_DB: ${env:DATABASE_DB}
   delay-job:
     image: delay-job-image
     events:
@@ -84,3 +107,20 @@ functions:
               requestParameters:
                 functionName:
                   - rostering-app-dev-delay-job
+    environment:
+      VERSION: ${env:VERSION}
+      NODE_ENV: ${env:NODE_ENV}
+      BUILD_MODE: ${env:BUILD_MODE}
+      JWT_SECRET: ${env:JWT_SECRET}
+      JWT_EXPIRE: ${env:JWT_EXPIRE}
+      PASSWORD_HASH_SECRET: ${env:PASSWORD_HASH_SECRET}
+      SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
+      AWS_REGION: ${env:AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
+      AWS_SQS_URL: ${env:AWS_SQS_URL}
+      DATABASE_HOST: ${env:DATABASE_HOST}
+      DATABASE_PORT: ${env:DATABASE_PORT}
+      DATABASE_USER: ${env:DATABASE_USER}
+      DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
+      DATABASE_DB: ${env:DATABASE_DB}
