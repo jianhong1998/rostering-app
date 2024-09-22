@@ -5,8 +5,8 @@ app: rostering-app
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: rostering-app
 
-# plugins:
-#   - serverless-dotenv-plugin
+plugins:
+  - serverless-dotenv-plugin
 
 # useDotenv: true
 
