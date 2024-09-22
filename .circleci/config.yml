@@ -224,7 +224,7 @@ jobs:
             npm ci
       - generate-backend-env:
           stage: 'DEV'
-          env_type: dev
+          env_type: 'awsdev'
       - run:
           name: Serverless Version
           command: |
