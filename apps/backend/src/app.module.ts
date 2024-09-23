@@ -14,7 +14,7 @@ import { QueueProducerModule } from './delay-jobs/queue/producer.module';
     AppConfig.configModule,
     AppConfig.typeormModule,
     AppConfig.jwtModule,
-    AppConfig.sqsProducerModule,
+    AppConfig.sqsModule,
     CommonModule,
     UserModule,
     AuthModule,

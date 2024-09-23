@@ -5,9 +5,8 @@ import { AppConfig } from '../app.config';
 
 @Module({
   imports: [
-    AppConfig.sqsProducerModule,
-    AppConfig.sqsConsumerModule,
     AppConfig.configModule,
+    AppConfig.sqsModule,
     QueueConsumerModule,
     QueueProducerModule,
   ],

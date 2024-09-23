@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UseInterceptors } from '@nestjs/common';
 import { SqsConsumerEventHandler, SqsMessageHandler } from '@ssut/nestjs-sqs';
 import { Message } from '@aws-sdk/client-sqs';
 import { QueueUtil } from '../utils/queue.util';
 import { MessageBody } from '../models/message-body.model';
+import { QueueErrorHandler } from '../middleware/queue-error-handler.interceptor';
 
 @Injectable()
 export class EmailQueueConsumerService {
@@ -13,6 +14,7 @@ export class EmailQueueConsumerService {
   }
 
   @SqsMessageHandler(QueueUtil.getQueueNames().emailQueue, false)
+  @UseInterceptors(QueueErrorHandler)
   async messageHandler(message: Message) {
     this.logger.log('Service Running', 'QueueMessage');
     console.log('Service Running');

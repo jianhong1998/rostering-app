@@ -12,6 +12,8 @@ import {
 import { QueueUtil } from './delay-jobs/queue/utils/queue.util';
 import { CommonModule } from './common/common.module';
 import { EnvironmentVariableUtil } from './common/utils/environment-variable.util';
+import { Logger } from '@nestjs/common';
+import { sqsProvider } from './delay-jobs/queue/provider/sqs-provider';
 
 export class AppConfig {
   private constructor() {}
@@ -44,9 +46,9 @@ export class AppConfig {
     }),
   });
 
-  public static sqsProducerModule = SqsModule.registerAsync({
+  public static sqsModule = SqsModule.registerAsync({
     imports: [CommonModule],
-    inject: [EnvironmentVariableUtil],
+    inject: [EnvironmentVariableUtil, sqsProvider],
     useFactory: (envVarUtil: EnvironmentVariableUtil) => {
       const envVars = envVarUtil.getVariables();
 
@@ -54,32 +56,16 @@ export class AppConfig {
       const region = envVars.sqsAwsRegion;
       const queueNames = QueueUtil.getQueueNames();
 
-      const producers = Object.entries(queueNames).map(
-        ([_, value]): SqsProducerOptions => ({
+      const producers = Object.values(queueNames).map<SqsProducerOptions>(
+        (value) => ({
           name: value,
           queueUrl,
           region,
         }),
       );
 
-      return {
-        producers,
-      };
-    },
-  });
-
-  public static sqsConsumerModule = SqsModule.registerAsync({
-    imports: [CommonModule],
-    inject: [EnvironmentVariableUtil],
-    useFactory: (envVarUtil: EnvironmentVariableUtil) => {
-      const envVars = envVarUtil.getVariables();
-
-      const queueUrl = envVars.sqsUrl;
-      const region = envVars.sqsAwsRegion;
-      const queueNames = QueueUtil.getQueueNames();
-
-      const consumers = Object.entries(queueNames).map(
-        ([_, value]): SqsConsumerOptions => ({
+      const consumers = Object.values(queueNames).map<SqsConsumerOptions>(
+        (value) => ({
           name: value,
           queueUrl,
           region,
@@ -87,8 +73,15 @@ export class AppConfig {
         }),
       );
 
-      return {
+      console.log({
+        producers,
         consumers,
+      });
+
+      return {
+        producers,
+        consumers,
+        logger: new Logger(),
       };
     },
   });
