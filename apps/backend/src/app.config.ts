@@ -13,7 +13,7 @@ import { QueueUtil } from './delay-jobs/queue/utils/queue.util';
 import { CommonModule } from './common/common.module';
 import { EnvironmentVariableUtil } from './common/utils/environment-variable.util';
 import { Logger } from '@nestjs/common';
-import { sqsProvider } from './delay-jobs/queue/provider/sqs-provider';
+import { SQS } from '@aws-sdk/client-sqs';
 
 export class AppConfig {
   private constructor() {}
@@ -48,19 +48,27 @@ export class AppConfig {
 
   public static sqsModule = SqsModule.registerAsync({
     imports: [CommonModule],
-    inject: [EnvironmentVariableUtil, sqsProvider],
+    inject: [EnvironmentVariableUtil],
     useFactory: (envVarUtil: EnvironmentVariableUtil) => {
       const envVars = envVarUtil.getVariables();
 
       const queueUrl = envVars.sqsUrl;
       const region = envVars.sqsAwsRegion;
       const queueNames = QueueUtil.getQueueNames();
+      const sqsClient = new SQS({
+        region: envVars.sqsAwsRegion,
+        credentials: {
+          accessKeyId: envVars.sqsAwsAccessKey,
+          secretAccessKey: envVars.sqsAwsSecretAccessKey,
+        },
+      });
 
       const producers = Object.values(queueNames).map<SqsProducerOptions>(
         (value) => ({
           name: value,
           queueUrl,
           region,
+          sqs: sqsClient,
         }),
       );
 
@@ -70,6 +78,7 @@ export class AppConfig {
           queueUrl,
           region,
           attributeNames: ['All'],
+          sqs: sqsClient,
         }),
       );
 
