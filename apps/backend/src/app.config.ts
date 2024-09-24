@@ -1,19 +1,16 @@
+import { SQS } from '@aws-sdk/client-sqs';
+import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import DatabaseConfig from './database/database.config';
-import { DataSource } from 'typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { randomBytes } from 'crypto';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { SqsModule } from '@ssut/nestjs-sqs';
-import {
-  // SqsConsumerOptions,
-  SqsProducerOptions,
-} from '@ssut/nestjs-sqs/dist/sqs.types';
-import { QueueUtil } from './delay-jobs/queue/utils/queue.util';
+import { SqsProducerOptions } from '@ssut/nestjs-sqs/dist/sqs.types';
+import { randomBytes } from 'crypto';
+import { DataSource } from 'typeorm';
 import { CommonModule } from './common/common.module';
 import { EnvironmentVariableUtil } from './common/utils/environment-variable.util';
-import { Logger } from '@nestjs/common';
-import { SQS } from '@aws-sdk/client-sqs';
+import DatabaseConfig from './database/database.config';
+import { QueueUtil } from './queue-producer/utils/queue.util';
 
 export class AppConfig {
   private constructor() {}
@@ -77,35 +74,8 @@ export class AppConfig {
         }),
       );
 
-      // const consumers = Object.values(queueNames).map<SqsConsumerOptions>(
-      //   (value) => ({
-      //     name: value,
-      //     queueUrl,
-      //     region,
-      //     attributeNames: ['All'],
-      //     sqs: sqsClient,
-      //   }),
-      // );
-
-      /**@todo remove debug logging*/
-      logger.debug(
-        JSON.stringify({
-          logType: 'DEBUG',
-          producers,
-          // consumers,
-          sqsVars: {
-            region: envVars.sqsAwsRegion,
-            credentials: {
-              accessKeyId: envVars.sqsAwsAccessKey,
-              secretAccessKey: envVars.sqsAwsSecretAccessKey,
-            },
-          },
-        }),
-      );
-
       return {
         producers,
-        // consumers,
         logger,
       };
     },

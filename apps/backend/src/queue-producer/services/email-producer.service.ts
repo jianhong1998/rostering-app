@@ -1,13 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { randomUUID } from 'crypto';
 import { SqsService } from '@ssut/nestjs-sqs';
-import { MessageGroupId } from '../enums/message-group-id.enum';
+import { randomUUID } from 'crypto';
 import { MessageAttributeDataType } from '../enums/message-attribute-data-type.enum';
-import { IQueueMessage } from '../types/queue.type';
-import { QueueUtil } from '../utils/queue.util';
+import { MessageGroupId } from '../enums/message-group-id.enum';
+
 import { JobType } from '../enums/job-type.enum';
 import { MessageBody } from '../models/message-body.model';
+import { IQueueMessage } from '../types/queue.type';
+import { QueueUtil } from '../utils/queue.util';
 
 @Injectable()
 export class EmailQueueProducerService {

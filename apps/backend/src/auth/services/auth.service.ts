@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { JobType } from 'src/delay-jobs/queue/enums/job-type.enum';
-import { MessageGroupId } from 'src/delay-jobs/queue/enums/message-group-id.enum';
-import { EmailQueueProducerService } from 'src/delay-jobs/queue/services/email-producer.service';
+import { JobType } from 'src/queue-producer/enums/job-type.enum';
+import { MessageGroupId } from 'src/queue-producer/enums/message-group-id.enum';
+import { EmailQueueProducerService } from 'src/queue-producer/services/email-producer.service';
 
 @Injectable()
 export class AuthService {

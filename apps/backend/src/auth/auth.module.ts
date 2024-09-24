@@ -5,7 +5,7 @@ import { UserModule } from 'src/user/user.module';
 import { AuthController } from './controllers/auth.controller';
 import { CommonModule } from 'src/common/common.module';
 import { AuthService } from './services/auth.service';
-import { QueueProducerModule } from 'src/delay-jobs/queue/producer.module';
+import { QueueProducerModule } from 'src/queue-producer/producer.module';
 
 @Module({
   imports: [UserModule, CommonModule, QueueProducerModule],
