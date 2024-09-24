@@ -38,6 +38,11 @@ export class EmailQueueProducerService {
       },
     };
 
+    console.log({
+      queueMessage,
+      sqsProvider: this.sqsProvider,
+    });
+
     await this.sqsProvider.send(queueMessage);
   }
 }
