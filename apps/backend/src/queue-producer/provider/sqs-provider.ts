@@ -44,6 +44,8 @@ export class SqsProvider {
       DelaySeconds: delaySeconds,
     });
 
+    console.log(JSON.stringify({ command }));
+
     await client.send(command);
   }
 }
