@@ -20,6 +20,7 @@ export class SqsProvider {
       //   accessKeyId: envVars.sqsAwsAccessKey,
       //   secretAccessKey: envVars.sqsAwsSecretAccessKey,
       // },
+      logger: console,
     });
 
     return this.sqsClient;
