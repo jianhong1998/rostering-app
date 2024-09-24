@@ -6,7 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
 import { SqsModule } from '@ssut/nestjs-sqs';
 import {
-  SqsConsumerOptions,
+  // SqsConsumerOptions,
   SqsProducerOptions,
 } from '@ssut/nestjs-sqs/dist/sqs.types';
 import { QueueUtil } from './delay-jobs/queue/utils/queue.util';
@@ -77,35 +77,22 @@ export class AppConfig {
         }),
       );
 
-      const consumers = Object.values(queueNames).map<SqsConsumerOptions>(
-        (value) => ({
-          name: value,
-          queueUrl,
-          region,
-          attributeNames: ['All'],
-          sqs: sqsClient,
-        }),
-      );
+      // const consumers = Object.values(queueNames).map<SqsConsumerOptions>(
+      //   (value) => ({
+      //     name: value,
+      //     queueUrl,
+      //     region,
+      //     attributeNames: ['All'],
+      //     sqs: sqsClient,
+      //   }),
+      // );
 
       /**@todo remove debug logging*/
-      logger.log(
-        JSON.stringify({
-          producers,
-          consumers,
-          sqsVars: {
-            region: envVars.sqsAwsRegion,
-            credentials: {
-              accessKeyId: envVars.sqsAwsAccessKey,
-              secretAccessKey: envVars.sqsAwsSecretAccessKey,
-            },
-          },
-        }),
-      );
       logger.debug(
         JSON.stringify({
           logType: 'DEBUG',
           producers,
-          consumers,
+          // consumers,
           sqsVars: {
             region: envVars.sqsAwsRegion,
             credentials: {
@@ -118,7 +105,7 @@ export class AppConfig {
 
       return {
         producers,
-        consumers,
+        // consumers,
         logger,
       };
     },
