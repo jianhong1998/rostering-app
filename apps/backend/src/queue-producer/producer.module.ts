@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EmailQueueProducerService } from './services/email-producer.service';
-import { sqsProvider } from './provider/sqs-provider';
+import { SqsProvider } from './provider/sqs-provider';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, CommonModule],
   controllers: [],
-  providers: [EmailQueueProducerService, sqsProvider],
+  providers: [EmailQueueProducerService, SqsProvider],
   exports: [EmailQueueProducerService],
 })
 export class QueueProducerModule {}

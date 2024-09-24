@@ -1,6 +1,6 @@
 import { MessageAttributeValue } from '@aws-sdk/client-sqs';
-import { MessageGroupId } from '../enums/message-group-id.enum';
 import { MessageAttributeDataType } from '../enums/message-attribute-data-type.enum';
+import { JobType } from '../enums/job-type.enum';
 
 type IQueueJob = {
   dataType: string;
@@ -18,15 +18,24 @@ export type IMessageBody<T> = {
   messageAttribute: IMessageAttribute;
 };
 
+type IQueueAttributeValue = {
+  DataType: MessageAttributeDataType;
+} & MessageAttributeValue;
+
 export type IQueueMessage = {
-  id: string;
   queueUrl: string;
   body: string;
-  messageGroupId?: MessageGroupId;
   messageDeduplicationId?: string;
   delaySeconds?: number;
-  messageAttributes?: Record<
-    string,
-    MessageAttributeValue & { DataType: MessageAttributeDataType }
-  >;
+  messageAttributes?: {
+    jobType: {
+      DataType: MessageAttributeDataType.STRING;
+      StringValue: JobType;
+    };
+    messageId: {
+      DataType: MessageAttributeDataType.STRING;
+      StringValue: string;
+    };
+    [key: string]: IQueueAttributeValue;
+  };
 };

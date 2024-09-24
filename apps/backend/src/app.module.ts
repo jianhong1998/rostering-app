@@ -14,7 +14,7 @@ import { QueueProducerModule } from './queue-producer/producer.module';
     AppConfig.configModule,
     AppConfig.typeormModule,
     AppConfig.jwtModule,
-    AppConfig.sqsModule,
+    // AppConfig.sqsModule,
     CommonModule,
     UserModule,
     AuthModule,

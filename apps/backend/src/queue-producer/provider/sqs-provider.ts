@@ -1,26 +1,49 @@
-import { Provider } from '@nestjs/common';
-import { SQS, SQSClientConfig } from '@aws-sdk/client-sqs';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
+import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
+import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
+import { IQueueMessage } from '../types/queue.type';
 
-export const sqsProvider: Provider = {
-  provide: SQS,
-  useFactory: (configService: ConfigService) => {
-    const region = configService.get<string>('SQS_AWS_REGION') ?? '';
-    const accessKeyId =
-      configService.get<string>('SQS_AWS_ACCESS_KEY_ID') ?? '';
-    const secretAccessKey = configService.get<string>(
-      'SQS_AWS_SECRET_ACCESS_KEY',
-    );
+@Injectable()
+export class SqsProvider {
+  private sqsClient: SQSClient;
 
-    const sqsConfig: SQSClientConfig = {
-      region,
+  constructor(private readonly envVarUtil: EnvironmentVariableUtil) {}
+
+  public getSqsClient(): SQSClient {
+    if (this.sqsClient) return this.sqsClient;
+
+    const envVars = this.envVarUtil.getVariables();
+
+    this.sqsClient = new SQSClient({
+      region: envVars.sqsAwsRegion,
       credentials: {
-        accessKeyId,
-        secretAccessKey,
+        accessKeyId: envVars.sqsAwsAccessKey,
+        secretAccessKey: envVars.sqsAwsSecretAccessKey,
       },
-    };
+    });
 
-    return new SQS(sqsConfig);
-  },
-  inject: [ConfigService],
-};
+    return this.sqsClient;
+  }
+
+  public async send(message: IQueueMessage): Promise<void> {
+    const client = this.getSqsClient();
+
+    const {
+      body,
+      queueUrl,
+      delaySeconds,
+      messageAttributes,
+      messageDeduplicationId,
+    } = message;
+
+    const command = new SendMessageCommand({
+      QueueUrl: queueUrl,
+      MessageBody: body,
+      MessageAttributes: messageAttributes,
+      MessageDeduplicationId: messageDeduplicationId,
+      DelaySeconds: delaySeconds,
+    });
+
+    await client.send(command);
+  }
+}

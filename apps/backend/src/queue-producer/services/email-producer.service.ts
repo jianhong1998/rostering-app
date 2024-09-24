@@ -1,14 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SqsService } from '@ssut/nestjs-sqs';
 import { randomUUID } from 'crypto';
 import { MessageAttributeDataType } from '../enums/message-attribute-data-type.enum';
-import { MessageGroupId } from '../enums/message-group-id.enum';
 
 import { JobType } from '../enums/job-type.enum';
 import { MessageBody } from '../models/message-body.model';
 import { IQueueMessage } from '../types/queue.type';
-import { QueueUtil } from '../utils/queue.util';
+import { SqsProvider } from '../provider/sqs-provider';
 
 @Injectable()
 export class EmailQueueProducerService {
@@ -16,39 +14,30 @@ export class EmailQueueProducerService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly sqsServivce: SqsService,
+    private readonly sqsProvider: SqsProvider,
   ) {
     const queueUrl = configService.get('AWS_SQS_URL') ?? '';
     this.queueUrl = queueUrl;
   }
 
-  async sendMessageToQueue<T>(
-    message: T,
-    jobType: JobType,
-    messageGroupId: MessageGroupId,
-  ) {
-    if (!Object.keys(JobType).includes(jobType as unknown as string)) {
-      throw new BadRequestException('Invalid Job Type.');
-    }
-
+  async sendMessageToQueue<T>(message: T) {
     const messageId = randomUUID();
-    const messageBody = new MessageBody(message, jobType);
+    const messageBody = new MessageBody(message, JobType.SEND_EMAIL);
     const queueMessage: IQueueMessage = {
-      id: messageId,
       queueUrl: this.queueUrl,
       body: JSON.stringify(messageBody),
-      messageGroupId,
       messageAttributes: {
-        job: {
+        jobType: {
           DataType: MessageAttributeDataType.STRING,
-          StringValue: jobType,
+          StringValue: JobType.SEND_EMAIL,
+        },
+        messageId: {
+          DataType: MessageAttributeDataType.STRING,
+          StringValue: messageId,
         },
       },
     };
 
-    await this.sqsServivce.send(
-      QueueUtil.getQueueNames().emailQueue,
-      queueMessage,
-    );
+    await this.sqsProvider.send(queueMessage);
   }
 }
