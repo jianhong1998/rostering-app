@@ -255,6 +255,7 @@ workflows:
               only:
                 - master
                 - feat/email-service
+                - feat/queue-handling
       - approve-dev-frontend-deploy:
           type: approval
           filters:
@@ -272,6 +273,7 @@ workflows:
               only:
                 - master
                 - feat/email-service
+                - feat/queue-handling
       - dev-db-migration-build-image:
           context:
             - common-database-secret
@@ -283,6 +285,7 @@ workflows:
               only:
                 - master
                 - feat/email-service
+                - feat/queue-handling
       - dev-delay-job-build-image:
           context:
             - common-database-secret
@@ -294,6 +297,7 @@ workflows:
               only:
                 - master
                 - feat/email-service
+                - feat/queue-handling
       - dev-deploy-backend:
           context:
             - serverless-deploy-secret
@@ -304,6 +308,7 @@ workflows:
               only:
                 - master
                 - feat/email-service
+                - feat/queue-handling
           requires:
             - dev-backend-build-image
             - dev-db-migration-build-image
