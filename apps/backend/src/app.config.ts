@@ -50,6 +50,11 @@ export class AppConfig {
     imports: [CommonModule],
     inject: [EnvironmentVariableUtil],
     useFactory: (envVarUtil: EnvironmentVariableUtil) => {
+      const LOG_KEY = 'SetupSqsModule';
+      const logger = new Logger(LOG_KEY);
+
+      logger.log('Start setting up SQS Module');
+
       const envVars = envVarUtil.getVariables();
 
       const queueUrl = envVars.sqsUrl;
@@ -82,15 +87,39 @@ export class AppConfig {
         }),
       );
 
-      console.log({
-        producers,
-        consumers,
-      });
+      /**@todo remove debug logging*/
+      logger.log(
+        JSON.stringify({
+          producers,
+          consumers,
+          sqsVars: {
+            region: envVars.sqsAwsRegion,
+            credentials: {
+              accessKeyId: envVars.sqsAwsAccessKey,
+              secretAccessKey: envVars.sqsAwsSecretAccessKey,
+            },
+          },
+        }),
+      );
+      logger.debug(
+        JSON.stringify({
+          logType: 'DEBUG',
+          producers,
+          consumers,
+          sqsVars: {
+            region: envVars.sqsAwsRegion,
+            credentials: {
+              accessKeyId: envVars.sqsAwsAccessKey,
+              secretAccessKey: envVars.sqsAwsSecretAccessKey,
+            },
+          },
+        }),
+      );
 
       return {
         producers,
         consumers,
-        logger: new Logger(),
+        logger,
       };
     },
   });
