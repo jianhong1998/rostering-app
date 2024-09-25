@@ -21,6 +21,7 @@ export class SqsProvider {
       //   secretAccessKey: envVars.sqsAwsSecretAccessKey,
       // },
       logger: console,
+      useDualstackEndpoint: true,
     });
 
     return this.sqsClient;
@@ -47,6 +48,11 @@ export class SqsProvider {
 
     console.log(JSON.stringify({ command }));
 
-    await client.send(command);
+    try {
+      await client.send(command);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }
