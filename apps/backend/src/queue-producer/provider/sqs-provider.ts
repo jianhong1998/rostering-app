@@ -22,7 +22,7 @@ export class SqsProvider {
       },
       logger: console,
       useQueueUrlAsEndpoint: false,
-      endpoint: envVars.sqsUrl,
+      endpoint: 'https://sqs.us-east-2.amazonaws.com/',
     });
 
     return this.sqsClient;
@@ -34,14 +34,14 @@ export class SqsProvider {
 
     const {
       body,
-      // queueUrl,
+      queueUrl,
       delaySeconds,
       messageAttributes,
       messageDeduplicationId,
     } = message;
 
     const command = new SendMessageCommand({
-      QueueUrl: undefined,
+      QueueUrl: queueUrl,
       MessageBody: body,
       MessageAttributes: messageAttributes,
       MessageDeduplicationId: messageDeduplicationId,
