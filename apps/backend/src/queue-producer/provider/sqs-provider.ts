@@ -21,7 +21,8 @@ export class SqsProvider {
         secretAccessKey: envVars.sqsAwsSecretAccessKey,
       },
       logger: console,
-      useQueueUrlAsEndpoint: true,
+      useQueueUrlAsEndpoint: false,
+      endpoint: envVars.sqsUrl,
     });
 
     return this.sqsClient;
@@ -33,14 +34,14 @@ export class SqsProvider {
 
     const {
       body,
-      queueUrl,
+      // queueUrl,
       delaySeconds,
       messageAttributes,
       messageDeduplicationId,
     } = message;
 
     const command = new SendMessageCommand({
-      QueueUrl: queueUrl,
+      QueueUrl: undefined,
       MessageBody: body,
       MessageAttributes: messageAttributes,
       MessageDeduplicationId: messageDeduplicationId,
