@@ -22,7 +22,7 @@ export class SqsProvider {
       },
       logger: console,
       useQueueUrlAsEndpoint: false,
-      endpoint: 'https://sqs.us-east-2.amazonaws.com/',
+      endpoint: 'https://sqs.ap-southeast-1.amazonaws.com/',
     });
 
     return this.sqsClient;
