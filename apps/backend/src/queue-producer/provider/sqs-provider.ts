@@ -12,25 +12,41 @@ export class SqsProvider {
   private getLogger(logKey?: string) {
     const logger = new Logger(logKey);
 
-    const logFn =
-      (logFunction: (message: string) => void) => (message: unknown) => {
-        if (typeof message === 'object') {
-          logFunction(JSON.stringify(message));
-        } else {
-          logFunction(String(message));
-        }
-      };
-
     return {
-      debug: logFn(logger.debug),
-      info: logFn(logger.log),
-      warn: logFn(logger.warn),
-      error: logFn(logger.error),
+      debug: (message: unknown) => {
+        if (typeof message === 'object') {
+          logger.debug(JSON.stringify(message));
+        } else {
+          logger.debug(String(message));
+        }
+      },
+      info: (message: unknown) => {
+        if (typeof message === 'object') {
+          logger.log(JSON.stringify(message));
+        } else {
+          logger.log(String(message));
+        }
+      },
+      warn: (message: unknown) => {
+        if (typeof message === 'object') {
+          logger.warn(JSON.stringify(message));
+        } else {
+          logger.warn(String(message));
+        }
+      },
+      error: (message: unknown) => {
+        if (typeof message === 'object') {
+          logger.error(JSON.stringify(message));
+        } else {
+          logger.error(String(message));
+        }
+      },
     };
   }
 
   public getSqsClient(): SQSClient {
     if (this.sqsClient) return this.sqsClient;
+    const logger = this.getLogger('SQS_Client');
 
     const envVars = this.envVarUtil.getVariables();
 
@@ -40,7 +56,7 @@ export class SqsProvider {
         accessKeyId: envVars.sqsAwsAccessKey,
         secretAccessKey: envVars.sqsAwsSecretAccessKey,
       },
-      logger: this.getLogger('SQS_Client'),
+      logger,
       useQueueUrlAsEndpoint: true,
     });
 
