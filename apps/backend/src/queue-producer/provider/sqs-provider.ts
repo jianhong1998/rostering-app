@@ -21,7 +21,7 @@ export class SqsProvider {
       //   secretAccessKey: envVars.sqsAwsSecretAccessKey,
       // },
       logger: console,
-      useDualstackEndpoint: true,
+      useQueueUrlAsEndpoint: true,
     });
 
     return this.sqsClient;
