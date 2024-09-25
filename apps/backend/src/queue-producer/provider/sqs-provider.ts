@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 import { IQueueMessage } from '../types/queue.type';
@@ -16,10 +16,10 @@ export class SqsProvider {
 
     this.sqsClient = new SQSClient({
       region: envVars.sqsAwsRegion,
-      // credentials: {
-      //   accessKeyId: envVars.sqsAwsAccessKey,
-      //   secretAccessKey: envVars.sqsAwsSecretAccessKey,
-      // },
+      credentials: {
+        accessKeyId: envVars.sqsAwsAccessKey,
+        secretAccessKey: envVars.sqsAwsSecretAccessKey,
+      },
       logger: console,
       useQueueUrlAsEndpoint: true,
     });
@@ -29,6 +29,7 @@ export class SqsProvider {
 
   public async send(message: IQueueMessage): Promise<void> {
     const client = this.getSqsClient();
+    const logger = new Logger('SQS_SendMessage');
 
     const {
       body,
@@ -46,13 +47,15 @@ export class SqsProvider {
       DelaySeconds: delaySeconds,
     });
 
-    console.log(JSON.stringify({ command }));
+    logger.log(JSON.stringify({ command }));
 
-    try {
-      await client.send(command);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+    const response = await new Promise((resolve, reject) => {
+      client.send(command, (error, data) => {
+        if (error) return reject(error);
+        resolve(data);
+      });
+    });
+
+    logger.log(JSON.stringify({ response }));
   }
 }
