@@ -21,9 +21,7 @@ export class SqsProvider {
         secretAccessKey: envVars.sqsAwsSecretAccessKey,
       },
       logger: console,
-      useQueueUrlAsEndpoint: false,
-      endpoint:
-        'https://vpce-00106ab3d1424d588-tq38hi4y.sqs.ap-southeast-1.vpce.amazonaws.com',
+      useQueueUrlAsEndpoint: true,
     });
 
     return this.sqsClient;
