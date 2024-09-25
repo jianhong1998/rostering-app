@@ -9,6 +9,26 @@ export class SqsProvider {
 
   constructor(private readonly envVarUtil: EnvironmentVariableUtil) {}
 
+  private getLogger(logKey?: string) {
+    const logger = new Logger(logKey);
+
+    const logFn =
+      (logFunction: (message: string) => void) => (message: unknown) => {
+        if (typeof message === 'object') {
+          logFunction(JSON.stringify(message));
+        } else {
+          logFunction(String(message));
+        }
+      };
+
+    return {
+      debug: logFn(logger.debug),
+      info: logFn(logger.log),
+      warn: logFn(logger.warn),
+      error: logFn(logger.error),
+    };
+  }
+
   public getSqsClient(): SQSClient {
     if (this.sqsClient) return this.sqsClient;
 
@@ -20,7 +40,7 @@ export class SqsProvider {
         accessKeyId: envVars.sqsAwsAccessKey,
         secretAccessKey: envVars.sqsAwsSecretAccessKey,
       },
-      logger: console,
+      logger: this.getLogger('SQS_Client'),
       useQueueUrlAsEndpoint: true,
     });
 
