@@ -9,45 +9,8 @@ export class SqsProvider {
 
   constructor(private readonly envVarUtil: EnvironmentVariableUtil) {}
 
-  private getLogger(logKey?: string) {
-    const logger = new Logger(logKey);
-
-    return {
-      debug: (message: unknown) => {
-        if (typeof message === 'object') {
-          logger.debug(JSON.stringify(message));
-        } else {
-          logger.debug(String(message));
-        }
-      },
-      info: (message: unknown) => {
-        if (typeof message === 'object') {
-          logger.log(JSON.stringify(message));
-        } else {
-          logger.log(String(message));
-        }
-      },
-      warn: (message: unknown) => {
-        if (typeof message === 'object') {
-          logger.warn(JSON.stringify(message));
-        } else {
-          logger.warn(String(message));
-        }
-      },
-      error: (message: unknown) => {
-        if (typeof message === 'object') {
-          logger.error(JSON.stringify(message));
-        } else {
-          logger.error(String(message));
-        }
-      },
-    };
-  }
-
   public getSqsClient(): SQSClient {
     if (this.sqsClient) return this.sqsClient;
-    const logger = this.getLogger('SQS_Client');
-
     const envVars = this.envVarUtil.getVariables();
 
     this.sqsClient = new SQSClient({
@@ -56,7 +19,7 @@ export class SqsProvider {
         accessKeyId: envVars.sqsAwsAccessKey,
         secretAccessKey: envVars.sqsAwsSecretAccessKey,
       },
-      logger,
+      logger: console,
       useQueueUrlAsEndpoint: true,
     });
 
