@@ -45,7 +45,8 @@ functions:
     events:
       - httpApi: '*'
     environment:
-      VERSION: ${env:VERSION}
+      # VERSION: ${env:VERSION}
+      VERSION: ${self:custom.rostering_app_secret.VERSION}
       NODE_ENV: ${env:NODE_ENV}
       BUILD_MODE: ${env:BUILD_MODE}
       JWT_SECRET: ${env:JWT_SECRET}
@@ -124,3 +125,6 @@ functions:
       DATABASE_USER: ${env:DATABASE_USER}
       DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
       DATABASE_DB: ${env:DATABASE_DB}
+
+custom:
+  rostering_app_secret: ${ssm:/aws/reference/secretsmanager/rostering-app/${opt:stage}}
