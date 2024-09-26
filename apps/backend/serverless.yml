@@ -45,23 +45,22 @@ functions:
     events:
       - httpApi: '*'
     environment:
-      # VERSION: ${env:VERSION}
-      VERSION: ${self:custom.rostering_app_secret.VERSION}
+      VERSION: ${env:VERSION}
       NODE_ENV: ${env:NODE_ENV}
       BUILD_MODE: ${env:BUILD_MODE}
-      JWT_SECRET: ${env:JWT_SECRET}
+      JWT_SECRET: ${self:custom.rostering_app_secret.JWT_SECRET}
       JWT_EXPIRE: ${env:JWT_EXPIRE}
-      PASSWORD_HASH_SECRET: ${env:PASSWORD_HASH_SECRET}
+      PASSWORD_HASH_SECRET: ${self:custom.rostering_app_secret.PASSWORD_HASH_SECRET}
       SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
       SQS_AWS_REGION: ${env:SQS_AWS_REGION}
-      SQS_AWS_ACCESS_KEY_ID: ${env:SQS_AWS_ACCESS_KEY_ID}
-      SQS_AWS_SECRET_ACCESS_KEY: ${env:SQS_AWS_SECRET_ACCESS_KEY}
-      AWS_SQS_URL: ${env:AWS_SQS_URL}
-      DATABASE_HOST: ${env:DATABASE_HOST}
-      DATABASE_PORT: ${env:DATABASE_PORT}
-      DATABASE_USER: ${env:DATABASE_USER}
-      DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
-      DATABASE_DB: ${env:DATABASE_DB}
+      SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
+      SQS_AWS_SECRET_ACCESS_KEY: ${self:custom.rostering_app_secret.SQS_AWS_SECRET_ACCESS_KEY}
+      AWS_SQS_URL: ${self:custom.rostering_app_secret.AWS_SQS_URL}
+      DATABASE_HOST: ${self:custom.database_secret.DATABASE_HOST}
+      DATABASE_PORT: ${self:custom.database_secret.DATABASE_PORT}
+      DATABASE_USER: ${self:custom.database_secret.DATABASE_USER}
+      DATABASE_PASSWORD: ${self:custom.database_secret.DATABASE_PASSWORD}
+      DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
   db-migration:
     image: db-migration-image
     events:
@@ -83,16 +82,16 @@ functions:
     environment:
       VERSION: ${env:VERSION}
       NODE_ENV: ${env:NODE_ENV}
-      DATABASE_HOST: ${env:DATABASE_HOST}
-      DATABASE_PORT: ${env:DATABASE_PORT}
-      DATABASE_USER: ${env:DATABASE_USER}
-      DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
-      DATABASE_DB: ${env:DATABASE_DB}
+      DATABASE_HOST: ${self:custom.database_secret.DATABASE_HOST}
+      DATABASE_PORT: ${self:custom.database_secret.DATABASE_PORT}
+      DATABASE_USER: ${self:custom.database_secret.DATABASE_USER}
+      DATABASE_PASSWORD: ${self:custom.database_secret.DATABASE_PASSWORD}
+      DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
   delay-job:
     image: delay-job-image
     events:
       - sqs:
-          arn: ${env:SERVERLESS_SQS_ARN}
+          arn: ${self:custom.rostering_app_secret.SERVERLESS_SQS_ARN}
       - eventBridge:
           pattern:
             source:
@@ -112,19 +111,20 @@ functions:
       VERSION: ${env:VERSION}
       NODE_ENV: ${env:NODE_ENV}
       BUILD_MODE: ${env:BUILD_MODE}
-      JWT_SECRET: ${env:JWT_SECRET}
+      JWT_SECRET: ${self:custom.rostering_app_secret.JWT_SECRET}
       JWT_EXPIRE: ${env:JWT_EXPIRE}
-      PASSWORD_HASH_SECRET: ${env:PASSWORD_HASH_SECRET}
+      PASSWORD_HASH_SECRET: ${self:custom.rostering_app_secret.PASSWORD_HASH_SECRET}
       SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
       SQS_AWS_REGION: ${env:SQS_AWS_REGION}
-      SQS_AWS_ACCESS_KEY_ID: ${env:SQS_AWS_ACCESS_KEY_ID}
-      SQS_AWS_SECRET_ACCESS_KEY: ${env:SQS_AWS_SECRET_ACCESS_KEY}
-      AWS_SQS_URL: ${env:AWS_SQS_URL}
-      DATABASE_HOST: ${env:DATABASE_HOST}
-      DATABASE_PORT: ${env:DATABASE_PORT}
-      DATABASE_USER: ${env:DATABASE_USER}
-      DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
-      DATABASE_DB: ${env:DATABASE_DB}
+      SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
+      SQS_AWS_SECRET_ACCESS_KEY: ${self:custom.rostering_app_secret.SQS_AWS_SECRET_ACCESS_KEY}
+      AWS_SQS_URL: ${self:custom.rostering_app_secret.AWS_SQS_URL}
+      DATABASE_HOST: ${self:custom.database_secret.DATABASE_HOST}
+      DATABASE_PORT: ${self:custom.database_secret.DATABASE_PORT}
+      DATABASE_USER: ${self:custom.database_secret.DATABASE_USER}
+      DATABASE_PASSWORD: ${self:custom.database_secret.DATABASE_PASSWORD}
+      DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
 
 custom:
   rostering_app_secret: ${ssm:/aws/reference/secretsmanager/rostering-app/${opt:stage}}
+  database_secret: ${ssm:/aws/reference/secretsmanager/common-db}
