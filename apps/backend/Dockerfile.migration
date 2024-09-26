@@ -33,5 +33,5 @@ COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
 # COPY --from=db-migrate-build /usr/apps/backend/.env ./
 COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
-CMD ["sh", "-c", "cd dist && ls && cd config && ls && cd ../.. && npm run migration:run" ]
+CMD ["sh", "-c", "npm run migration:run" ]
 # CMD ["sh", "-c", "node -r dotenv/config ./node_modules/typeorm/cli.js -d dist/config/data-source.js migration:run"]
