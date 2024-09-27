@@ -1,25 +1,26 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 import { IQueueMessage } from '../types/queue.type';
+import { LoggerUtil } from 'src/common/utils/logger.util';
 
 @Injectable()
 export class SqsProvider {
   private sqsClient: SQSClient;
+  private envVarList: ReturnType<EnvironmentVariableUtil['getVariables']>;
 
-  constructor(private readonly envVarUtil: EnvironmentVariableUtil) {}
+  constructor(
+    private readonly envVarUtil: EnvironmentVariableUtil,
+    private readonly loggerUtil: LoggerUtil,
+  ) {
+    this.envVarList = envVarUtil.getVariables();
+  }
 
   public getSqsClient(): SQSClient {
     if (this.sqsClient) return this.sqsClient;
-    const envVars = this.envVarUtil.getVariables();
 
     this.sqsClient = new SQSClient({
-      region: envVars.sqsAwsRegion,
-      // credentials: {
-      // accessKeyId: envVars.sqsAwsAccessKey,
-      // secretAccessKey: envVars.sqsAwsSecretAccessKey,
-      // },
-      logger: console,
+      region: this.envVarList.sqsAwsRegion,
       useQueueUrlAsEndpoint: true,
     });
 
@@ -28,7 +29,7 @@ export class SqsProvider {
 
   public async send(message: IQueueMessage): Promise<void> {
     const client = this.getSqsClient();
-    const logger = new Logger('SQS_SendMessage');
+    const logger = this.loggerUtil.createLogger('SQS_SendMessage');
 
     const {
       body,
@@ -38,23 +39,22 @@ export class SqsProvider {
       messageDeduplicationId,
     } = message;
 
-    const command = new SendMessageCommand({
-      QueueUrl: queueUrl,
-      MessageBody: body,
-      MessageAttributes: messageAttributes,
-      MessageDeduplicationId: messageDeduplicationId,
-      DelaySeconds: delaySeconds,
-    });
+    logger.log('Sending message to SQS');
 
-    logger.log(JSON.stringify({ command }));
-
-    const response = await new Promise((resolve, reject) => {
-      client.send(command, (error, data) => {
-        if (error) return reject(error);
-        resolve(data);
+    try {
+      const command = new SendMessageCommand({
+        QueueUrl: queueUrl,
+        MessageBody: body,
+        MessageAttributes: messageAttributes,
+        MessageDeduplicationId: messageDeduplicationId,
+        DelaySeconds: delaySeconds,
       });
-    });
+      const response = await client.send(command);
 
-    logger.log(JSON.stringify({ response }));
+      logger.log(JSON.stringify({ response }));
+    } catch (error) {
+      logger.error('Failed to send message to SQS!');
+      throw error;
+    }
   }
 }
