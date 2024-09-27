@@ -250,65 +250,55 @@ workflows:
     jobs:
       - approve-dev-backend-deploy:
           type: approval
-          filters:
-            branches:
-              only:
-                - master
-                - feat/email-service
-                - feat/queue-handling
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - approve-dev-frontend-deploy:
           type: approval
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - dev-backend-build-image:
           context:
             - common-database-secret
             - aws-role-secret
           requires:
             - approve-dev-backend-deploy
-          filters:
-            branches:
-              only:
-                - master
-                - feat/email-service
-                - feat/queue-handling
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - dev-db-migration-build-image:
           context:
             - common-database-secret
             - aws-role-secret
           requires:
             - approve-dev-backend-deploy
-          filters:
-            branches:
-              only:
-                - master
-                - feat/email-service
-                - feat/queue-handling
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - dev-delay-job-build-image:
           context:
             - common-database-secret
             - aws-role-secret
           requires:
             - approve-dev-backend-deploy
-          filters:
-            branches:
-              only:
-                - master
-                - feat/email-service
-                - feat/queue-handling
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - dev-deploy-backend:
           context:
             - serverless-deploy-secret
             - common-database-secret
             - rostering-dev-aws-secret
-          filters:
-            branches:
-              only:
-                - master
-                - feat/email-service
-                - feat/queue-handling
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
           requires:
             - dev-backend-build-image
             - dev-db-migration-build-image
@@ -318,7 +308,7 @@ workflows:
             - aws-role-secret
           requires:
             - approve-dev-frontend-deploy
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
