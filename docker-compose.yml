@@ -21,13 +21,13 @@ services:
     build:
       context: ./apps/backend
       dockerfile: Dockerfile.local
-      target: final
+      target: backend
     env_file:
       - ./apps/backend/.env
     network_mode: host
     depends_on:
-      db-migration-service:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
     develop:
       watch:
         - path: ./apps/backend/src
@@ -36,6 +36,11 @@ services:
           action: rebuild
         - path: ./apps/backend/package.json
           action: rebuild
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sS http://localhost:3001/version || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db-migration-service:
     container_name: db-migration
@@ -49,6 +54,24 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  delay-job:
+    container_name: delay-job
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.local
+      target: delay-job
+    env_file:
+      - ./apps/backend/.env
+    network_mode: host
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sS http://localhost:3005 || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     container_name: frontend-app

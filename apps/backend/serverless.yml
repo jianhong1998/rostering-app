@@ -5,8 +5,8 @@ app: rostering-app
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: rostering-app
 
-# plugins:
-#   - serverless-dotenv-plugin
+plugins:
+  - serverless-dotenv-plugin
 
 # useDotenv: true
 
@@ -32,6 +32,8 @@ provider:
         uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/serverless-rostering-app-dev:latest
       db-migration-image:
         uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/rostering-app-dev-migration:latest
+      delay-job-image:
+        uri: 383373959609.dkr.ecr.ap-southeast-1.amazonaws.com/rostering-app-dev-delay-job:latest
 
 stages:
   default:
@@ -42,8 +44,23 @@ functions:
     image: backend-image
     events:
       - httpApi: '*'
-    # environment:
-    #   VERSION: ${param:VERSION}
+    environment:
+      VERSION: ${env:VERSION}
+      NODE_ENV: ${env:NODE_ENV}
+      BUILD_MODE: ${env:BUILD_MODE}
+      JWT_SECRET: ${self:custom.rostering_app_secret.JWT_SECRET}
+      JWT_EXPIRE: ${env:JWT_EXPIRE}
+      PASSWORD_HASH_SECRET: ${self:custom.rostering_app_secret.PASSWORD_HASH_SECRET}
+      SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
+      SQS_AWS_REGION: ${env:SQS_AWS_REGION}
+      SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
+      SQS_AWS_SECRET_ACCESS_KEY: ${self:custom.rostering_app_secret.SQS_AWS_SECRET_ACCESS_KEY}
+      AWS_SQS_URL: ${self:custom.rostering_app_secret.AWS_SQS_URL}
+      DATABASE_HOST: ${self:custom.database_secret.DATABASE_HOST}
+      DATABASE_PORT: ${self:custom.database_secret.DATABASE_PORT}
+      DATABASE_USER: ${self:custom.database_secret.DATABASE_USER}
+      DATABASE_PASSWORD: ${self:custom.database_secret.DATABASE_PASSWORD}
+      DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
   db-migration:
     image: db-migration-image
     events:
@@ -62,3 +79,52 @@ functions:
               requestParameters:
                 functionName:
                   - rostering-app-dev-db-migration
+    environment:
+      VERSION: ${env:VERSION}
+      NODE_ENV: ${env:NODE_ENV}
+      DATABASE_HOST: ${self:custom.database_secret.DATABASE_HOST}
+      DATABASE_PORT: ${self:custom.database_secret.DATABASE_PORT}
+      DATABASE_USER: ${self:custom.database_secret.DATABASE_USER}
+      DATABASE_PASSWORD: ${self:custom.database_secret.DATABASE_PASSWORD}
+      DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
+  delay-job:
+    image: delay-job-image
+    events:
+      - sqs:
+          arn: ${self:custom.rostering_app_secret.SERVERLESS_SQS_ARN}
+      - eventBridge:
+          pattern:
+            source:
+              - aws.lambda
+            detail-type:
+              - AWS API Call via CloudTrail
+            detail:
+              eventSource:
+                - lambda.amazonaws.com
+              eventName:
+                - anything-but:
+                    - UpdateFunctionCode
+              requestParameters:
+                functionName:
+                  - rostering-app-dev-delay-job
+    environment:
+      VERSION: ${env:VERSION}
+      NODE_ENV: ${env:NODE_ENV}
+      BUILD_MODE: ${env:BUILD_MODE}
+      JWT_SECRET: ${self:custom.rostering_app_secret.JWT_SECRET}
+      JWT_EXPIRE: ${env:JWT_EXPIRE}
+      PASSWORD_HASH_SECRET: ${self:custom.rostering_app_secret.PASSWORD_HASH_SECRET}
+      SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
+      SQS_AWS_REGION: ${env:SQS_AWS_REGION}
+      SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
+      SQS_AWS_SECRET_ACCESS_KEY: ${self:custom.rostering_app_secret.SQS_AWS_SECRET_ACCESS_KEY}
+      AWS_SQS_URL: ${self:custom.rostering_app_secret.AWS_SQS_URL}
+      DATABASE_HOST: ${self:custom.database_secret.DATABASE_HOST}
+      DATABASE_PORT: ${self:custom.database_secret.DATABASE_PORT}
+      DATABASE_USER: ${self:custom.database_secret.DATABASE_USER}
+      DATABASE_PASSWORD: ${self:custom.database_secret.DATABASE_PASSWORD}
+      DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
+
+custom:
+  rostering_app_secret: ${ssm:/aws/reference/secretsmanager/rostering-app/${opt:stage}}
+  database_secret: ${ssm:/aws/reference/secretsmanager/common-db}

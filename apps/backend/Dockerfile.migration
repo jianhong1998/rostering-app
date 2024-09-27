@@ -1,7 +1,7 @@
 # =======================================================
 # Install Stage
 # =======================================================
-FROM --platform=linux/arm64 node:20.15.1-slim AS install
+FROM node:20.15.1-slim AS install
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
@@ -10,7 +10,7 @@ RUN npm ci --omit=dev
 # =======================================================
 # Build Stage
 # =======================================================
-FROM --platform=linux/arm64 node:20.15.1-slim AS db-migrate-build
+FROM node:20.15.1-slim AS db-migrate-build
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
@@ -30,7 +30,8 @@ ENV NPM_CONFIG_CACHE=/tmp/.npm
 COPY --from=install /usr/apps/backend/node_modules ./node_modules
 COPY --from=db-migrate-build /usr/apps/backend/dist ./dist
 COPY --from=db-migrate-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
-COPY --from=db-migrate-build /usr/apps/backend/.env ./
+# COPY --from=db-migrate-build /usr/apps/backend/.env ./
 COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
 CMD ["sh", "-c", "npm run migration:run" ]
+# CMD ["sh", "-c", "node -r dotenv/config ./node_modules/typeorm/cli.js -d dist/config/data-source.js migration:run"]

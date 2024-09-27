@@ -22,7 +22,8 @@ RUN npm ci --omit=dev
 # =======================================================
 # Final Stage
 # =======================================================
-FROM --platform=linux/arm64 public.ecr.aws/lambda/nodejs:20-arm64 AS final
+# FROM --platform=linux/arm64 node:20.15.1-slim
+FROM --platform=linux/arm64 public.ecr.aws/lambda/nodejs:20-arm64
 WORKDIR ${LAMBDA_TASK_ROOT}
 
 COPY --from=install /usr/apps/backend/node_modules ./node_modules
@@ -30,4 +31,4 @@ COPY --from=build /usr/apps/backend/dist ./dist
 COPY --from=build /usr/apps/backend/ap-southeast-1-bundle.pem ./
 # COPY --from=build /usr/apps/backend/.env ./
 
-CMD ["dist/main.handler"]
+CMD ["dist/delay-job.handler"]

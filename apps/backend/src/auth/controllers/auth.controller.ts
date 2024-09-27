@@ -1,10 +1,11 @@
-import { Controller, Post, Res } from '@nestjs/common';
+import { Controller, Logger, Post, Res } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { TokenUtil } from '../utils/token.util';
 import { Response } from 'express';
 import { UserDBUtil } from 'src/user/utils/userDB.util';
 import { randomUUID } from 'crypto';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
+import { AuthService } from '../services/auth.service';
 
 @Controller('/auth')
 export class AuthController {
@@ -12,11 +13,12 @@ export class AuthController {
     private readonly tokenUtil: TokenUtil,
     private readonly userDbUtil: UserDBUtil,
     private readonly envVarUtil: EnvironmentVariableUtil,
+    private readonly authService: AuthService,
   ) {}
 
   @Post('/')
   @Public()
-  async loggin(@Res() res: Response) {
+  async login(@Res() res: Response) {
     const users = await this.userDbUtil.getAll({
       relation: {
         account: false,
@@ -30,6 +32,10 @@ export class AuthController {
     };
 
     const tokenData = await this.tokenUtil.generateToken(payload);
+
+    Logger.log('Sending queue message to email queue...', 'LoginFunction');
+    await this.authService.login();
+    Logger.log('Queue message is sent to email queue', 'LoginFunction');
 
     res.cookie('token', tokenData.token, {
       httpOnly: true,

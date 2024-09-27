@@ -32,6 +32,15 @@ commands:
             echo "DATABASE_USER=\"${<< parameters.stage >>_DATABASE_USER}\"" >> .env
             echo "DATABASE_PASSWORD=\"${<< parameters.stage >>_DATABASE_PASSWORD}\"" >> .env
             echo "DATABASE_DB=\"${<< parameters.stage >>_DATABASE_DB}\"" >> .env
+            echo "JWT_EXPIRE=\"${<< parameters.stage >>_JWT_EXPIRE}\"" >> .env
+            echo "JWT_SECRET=\"${<< parameters.stage >>_JWT_SECRET}\"" >> .env
+            echo "PASSWORD_HASH_SECRET=\"${<< parameters.stage >>_PASSWORD_HASH_SECRET}\"" >> .env
+            echo "SQS_NAME_EMAIL=\"${<< parameters.stage >>_SQS_NAME_EMAIL}\"" >> .env
+            echo "SERVERLESS_SQS_ARN=\"${<< parameters.stage >>_SERVERLESS_SQS_ARN}\"" >> .env
+            echo "SQS_AWS_REGION=\"${<< parameters.stage >>_SQS_AWS_REGION}\"" >> .env
+            echo "AWS_SQS_URL=\"${<< parameters.stage >>_AWS_SQS_URL}\"" >> .env
+            echo "SQS_AWS_ACCESS_KEY_ID=\"${<< parameters.stage >>_SQS_AWS_ACCESS_KEY_ID}\"" >> .env
+            echo "SQS_AWS_SECRET_ACCESS_KEY=\"${<< parameters.stage >>_SQS_AWS_SECRET_ACCESS_KEY}\"" >> .env
       - run:
           name: Print generated .env file
           command: |
@@ -49,9 +58,9 @@ commands:
       env_type:
         type: string
     steps:
-      - generate-backend-env:
-          stage: << parameters.stage >>
-          env_type: << parameters.env_type >>
+      # - generate-backend-env:
+      #     stage: << parameters.stage >>
+      #     env_type: << parameters.env_type >>
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
@@ -74,9 +83,9 @@ commands:
       env_type:
         type: string
     steps:
-      - generate-backend-env:
-          stage: << parameters.stage >>
-          env_type: << parameters.env_type >>
+      # - generate-backend-env:
+      #     stage: << parameters.stage >>
+      #     env_type: << parameters.env_type >>
       - aws-ecr/build_and_push_image:
           auth:
             - aws-cli/setup:
@@ -86,6 +95,31 @@ commands:
           build_path: ~/project/apps/backend
           path: ~/project/apps/backend
           dockerfile: Dockerfile.migration
+          extra_build_args: --provenance=false
+
+  delay-job-build-and-push-to-ecr:
+    description: 'Build Delay Job images then push to ECR'
+    parameters:
+      delay_job_repo:
+        type: string
+      stage:
+        type: string
+        default: 'DEV'
+      env_type:
+        type: string
+    steps:
+      # - generate-backend-env:
+      #     stage: << parameters.stage >>
+      #     env_type: << parameters.env_type >>
+      - aws-ecr/build_and_push_image:
+          auth:
+            - aws-cli/setup:
+                profile_name: default
+          repo: << parameters.delay_job_repo >>
+          tag: latest
+          build_path: ~/project/apps/backend
+          path: ~/project/apps/backend
+          dockerfile: Dockerfile.delay-job
           extra_build_args: --provenance=false
 
   deploy-frontend:
@@ -156,6 +190,19 @@ jobs:
           stage: 'DEV'
           env_type: 'awsDev'
 
+  dev-delay-job-build-image:
+    docker:
+      - image: 'cimg/node:20.17.0'
+    resource_class: large
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - delay-job-build-and-push-to-ecr:
+          delay_job_repo: rostering-app-dev-delay-job
+          stage: 'DEV'
+          env_type: 'awsDev'
+
   dev-deploy-backend:
     docker:
       - image: cimg/node:20.17.0
@@ -168,7 +215,7 @@ jobs:
       - run:
           name: Install Serverless
           command: |
-            npm install --prefix=$HOME/.local --global serverless@4.2.4
+            npm install --prefix=$HOME/.local --global serverless@4.2.4 serverless-dotenv-plugin
             sls -v
       - run:
           name: Install Backend Dependencies
@@ -177,7 +224,7 @@ jobs:
             npm ci
       - generate-backend-env:
           stage: 'DEV'
-          env_type: dev
+          env_type: 'awsdev'
       - run:
           name: Serverless Version
           command: |
@@ -203,53 +250,65 @@ workflows:
     jobs:
       - approve-dev-backend-deploy:
           type: approval
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - approve-dev-frontend-deploy:
           type: approval
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - dev-backend-build-image:
           context:
             - common-database-secret
             - aws-role-secret
           requires:
             - approve-dev-backend-deploy
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - dev-db-migration-build-image:
           context:
             - common-database-secret
             - aws-role-secret
           requires:
             - approve-dev-backend-deploy
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
+      - dev-delay-job-build-image:
+          context:
+            - common-database-secret
+            - aws-role-secret
+          requires:
+            - approve-dev-backend-deploy
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
       - dev-deploy-backend:
           context:
             - serverless-deploy-secret
             - common-database-secret
-          filters:
-            branches:
-              only:
-                - master
+            - rostering-dev-aws-secret
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
           requires:
             - dev-backend-build-image
             - dev-db-migration-build-image
+            - dev-delay-job-build-image
       - dev-deploy-frontend:
           context:
             - aws-role-secret
           requires:
             - approve-dev-frontend-deploy
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master

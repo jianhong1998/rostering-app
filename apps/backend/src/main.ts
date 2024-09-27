@@ -21,6 +21,5 @@ async function bootstrap() {
 
 export const handler: Handler = async (event, context, callback) => {
   server = server ?? (await bootstrap());
-
   return server(event, context, callback);
 };

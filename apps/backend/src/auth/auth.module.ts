@@ -4,10 +4,12 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { UserModule } from 'src/user/user.module';
 import { AuthController } from './controllers/auth.controller';
 import { CommonModule } from 'src/common/common.module';
+import { AuthService } from './services/auth.service';
+import { QueueProducerModule } from 'src/queue-producer/producer.module';
 
 @Module({
-  imports: [UserModule, CommonModule],
-  providers: [TokenUtil, AuthGuardService],
+  imports: [UserModule, CommonModule, QueueProducerModule],
+  providers: [TokenUtil, AuthGuardService, AuthService],
   controllers: [AuthController],
   exports: [TokenUtil, AuthGuardService],
 })
