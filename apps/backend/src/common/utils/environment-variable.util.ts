@@ -22,7 +22,6 @@ type IEnvironmentVariableList = {
   passwordHashSecret: string;
 
   // SQS Related
-  sqsNameEmail: string;
   sqsUrl: string;
 
   // SQS AWS
@@ -67,7 +66,6 @@ export class EnvironmentVariableUtil {
       sqsAwsRegion:
         this.configService.get('SQS_AWS_REGION') ?? 'ap-southeast-1',
 
-      sqsNameEmail: this.configService.get('SQS_NAME_EMAIL') ?? 'EmailQueue',
       sqsUrl: this.configService.get('AWS_SQS_URL') ?? '',
     };
 

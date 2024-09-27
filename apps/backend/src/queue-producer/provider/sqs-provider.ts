@@ -15,10 +15,10 @@ export class SqsProvider {
 
     this.sqsClient = new SQSClient({
       region: envVars.sqsAwsRegion,
-      credentials: {
-        accessKeyId: envVars.sqsAwsAccessKey,
-        secretAccessKey: envVars.sqsAwsSecretAccessKey,
-      },
+      // credentials: {
+      // accessKeyId: envVars.sqsAwsAccessKey,
+      // secretAccessKey: envVars.sqsAwsSecretAccessKey,
+      // },
       logger: console,
       useQueueUrlAsEndpoint: true,
     });
