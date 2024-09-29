@@ -2,9 +2,11 @@ import { createTransport, Transporter } from 'nodemailer';
 import { IEventBody, IEventInfo } from '../types/event.type';
 import { SES } from '@aws-sdk/client-ses';
 import * as ClientSES from '@aws-sdk/client-ses';
+import { DelayJobLogger } from '../utils/delay-job-logger.util';
 
 export class EmailService {
   public transporter: Transporter;
+  public logger: DelayJobLogger;
 
   private static instance: EmailService;
 
@@ -20,16 +22,17 @@ export class EmailService {
         aws: ClientSES,
       },
     });
+
+    this.logger = new DelayJobLogger('Email Service');
   }
 
   public static async handleSendEmail(eventInfo: IEventInfo): Promise<void> {
     const eventBody = JSON.parse(eventInfo.body) as IEventBody;
+    const instance = this.getInstance();
 
-    const result = await this.getInstance().transporter.sendMail(
-      eventBody.message,
-    );
-
-    console.log(`Message sent: ${result.messageId}`);
+    instance.logger.log(`Sending email to ${eventBody.message.to}`);
+    await instance.transporter.sendMail(eventBody.message);
+    instance.logger.log(`Email is sent to ${eventBody.message.to}`);
   }
 
   private static getInstance(): EmailService {
