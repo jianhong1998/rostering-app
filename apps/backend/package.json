@@ -24,6 +24,7 @@
     "seed:run": "npm run typeorm-extension -- seed:run"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.658.1",
     "@aws-sdk/client-sqs": "^3.654.0",
     "@codegenie/serverless-express": "^4.15.0",
     "@nestjs/common": "^10.0.0",

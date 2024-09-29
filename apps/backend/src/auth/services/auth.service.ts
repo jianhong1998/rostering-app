@@ -9,18 +9,15 @@ export class AuthService {
   ) {}
 
   public async login() {
-    const emailAddress = 'jianhong@mavericks-consulting.com';
-    // const emailMessage = 'Some message';
-    // const queueMesage = {
-    //   emailAddress,
-    //   emailMessage,
-    // };
+    const sender = 'jiyue0904@gmail.com';
+    const recipient = 'jianhong@mavericks-consulting.com';
+    const replyTo = 'jiyuesg@gmail.com';
 
     const message = new LoginEmailGenerator().generateEmailOptions({
       addresses: {
-        to: emailAddress,
-        from: emailAddress,
-        replyTo: 'jiyue0904@gmail.com',
+        to: recipient,
+        from: sender,
+        replyTo,
       },
       params: {
         expireDateTime: '2024-01-01 12:00PM',

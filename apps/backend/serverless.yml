@@ -116,6 +116,7 @@ functions:
       PASSWORD_HASH_SECRET: ${self:custom.rostering_app_secret.PASSWORD_HASH_SECRET}
       SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
       SQS_AWS_REGION: ${env:SQS_AWS_REGION}
+      SES_AWS_REGION: ${env:SES_AWS_REGION}
       SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
       SQS_AWS_SECRET_ACCESS_KEY: ${self:custom.rostering_app_secret.SQS_AWS_SECRET_ACCESS_KEY}
       AWS_SQS_URL: ${self:custom.rostering_app_secret.AWS_SQS_URL}
