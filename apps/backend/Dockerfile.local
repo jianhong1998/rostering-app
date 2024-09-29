@@ -19,7 +19,7 @@ WORKDIR /usr/apps/backend
 
 COPY package*.json .
 RUN npm ci --omit=dev
-RUN npm i serverless-offline
+RUN npm i serverless-offline serverless-offline-sqs
 
 # =======================================================
 # Backend Final Stage

@@ -8,6 +8,7 @@ service: rostering-app
 plugins:
   - serverless-dotenv-plugin
   - serverless-offline
+  - serverless-offline-sqs
 
 useDotenv: true
 
@@ -31,3 +32,9 @@ functions:
       - sqs:
           arn: ${env:SERVERLESS_SQS_ARN}
       - httpApi: '*'
+
+custom:
+  serverless-offline-sqs:
+    autoCreate: false
+    endpoint: ${env:AWS_SQS_URL}
+    region: ${env:SQS_AWS_REGION}
