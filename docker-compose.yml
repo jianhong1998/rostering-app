@@ -72,6 +72,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    develop:
+      watch:
+        - path: ./apps/backend/src
+          action: rebuild
+        - path: ./apps/backend/.env
+          action: rebuild
+        - path: ./apps/backend/package.json
+          action: rebuild
 
   frontend:
     container_name: frontend-app

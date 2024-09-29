@@ -2,10 +2,10 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 export abstract class BaseEmailGenerator {
-  public readonly templateFileName: string;
-  public readonly generatorId: string;
-  public readonly paramList: string[];
-  public readonly emailSubjectTemplate: string;
+  protected readonly templateFileName: string;
+  protected readonly generatorId: string;
+  protected readonly paramList: string[];
+  protected readonly emailSubjectTemplate: string;
 
   constructor(params: {
     templateFileName: string;
