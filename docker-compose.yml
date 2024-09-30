@@ -20,7 +20,7 @@ services:
     container_name: backend-app
     build:
       context: ./apps/backend
-      dockerfile: Dockerfile.local
+      dockerfile: deploy/local/Dockerfile
       target: backend
     env_file:
       - ./apps/backend/.env
@@ -46,7 +46,7 @@ services:
     container_name: db-migration
     build:
       context: ./apps/backend
-      dockerfile: Dockerfile.local
+      dockerfile: deploy/local/Dockerfile
       target: db-migrate
     env_file:
       - ./apps/backend/.env
@@ -59,7 +59,7 @@ services:
     container_name: delay-job
     build:
       context: ./apps/backend
-      dockerfile: Dockerfile.local
+      dockerfile: deploy/local/Dockerfile
       target: delay-job
     env_file:
       - ./apps/backend/.env
