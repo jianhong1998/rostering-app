@@ -85,7 +85,7 @@ services:
     container_name: frontend-app
     build:
       context: ./apps/frontend
-      dockerfile: Dockerfile.local
+      dockerfile: deploy/local/Dockerfile
     network_mode: host
     develop:
       watch:
