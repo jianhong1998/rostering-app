@@ -20,7 +20,7 @@ services:
     container_name: backend-app
     build:
       context: ./apps/backend
-      dockerfile: Dockerfile.local
+      dockerfile: deploy/local/Dockerfile
       target: backend
     env_file:
       - ./apps/backend/.env
@@ -46,7 +46,7 @@ services:
     container_name: db-migration
     build:
       context: ./apps/backend
-      dockerfile: Dockerfile.local
+      dockerfile: deploy/local/Dockerfile
       target: db-migrate
     env_file:
       - ./apps/backend/.env
@@ -59,7 +59,7 @@ services:
     container_name: delay-job
     build:
       context: ./apps/backend
-      dockerfile: Dockerfile.local
+      dockerfile: deploy/local/Dockerfile
       target: delay-job
     env_file:
       - ./apps/backend/.env
@@ -72,12 +72,20 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    develop:
+      watch:
+        - path: ./apps/backend/src
+          action: rebuild
+        - path: ./apps/backend/.env
+          action: rebuild
+        - path: ./apps/backend/package.json
+          action: rebuild
 
   frontend:
     container_name: frontend-app
     build:
       context: ./apps/frontend
-      dockerfile: Dockerfile.local
+      dockerfile: deploy/local/Dockerfile
     network_mode: host
     develop:
       watch:

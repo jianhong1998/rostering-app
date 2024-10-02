@@ -9,6 +9,7 @@ RUN npm ci
 
 COPY . .
 RUN npm run build:swc
+COPY ./src/emails/templates ./dist/emails/templates
 
 # =======================================================
 # Install Stage
@@ -18,7 +19,7 @@ WORKDIR /usr/apps/backend
 
 COPY package*.json .
 RUN npm ci --omit=dev
-RUN npm i serverless-offline
+RUN npm i serverless-offline serverless-offline-sqs
 
 # =======================================================
 # Backend Final Stage
@@ -31,11 +32,11 @@ COPY --from=backend-build /usr/apps/backend/dist ./dist
 # COPY --from=backend-build /usr/apps/backend/config ./config
 COPY --from=backend-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
 # COPY --from=backend-build /usr/apps/backend/nest-cli.json ./
-COPY --from=backend-build /usr/apps/backend/serverless.local.yml ./
+COPY --from=backend-build /usr/apps/backend/serverless.backend.local.yml ./
 COPY --from=backend-build /usr/apps/backend/.env ./
 COPY --from=backend-build /usr/apps/backend/package*.json ./
 
-CMD ["sh", "-c", "npx serverless offline start -c serverless.local.yml --httpPort 3001"]
+CMD ["sh", "-c", "npx serverless offline start -c serverless.backend.local.yml --httpPort 3001"]
 
 # =======================================================
 # DB Migrate Build Stage
@@ -74,6 +75,7 @@ RUN npm ci
 
 COPY . .
 RUN npm run build:swc
+COPY ./src/emails/templates ./dist/emails/templates
 
 # =======================================================
 # DB Migrate Final Stage

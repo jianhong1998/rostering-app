@@ -38,13 +38,6 @@ export class EmailQueueProducerService {
       },
     };
 
-    console.log(
-      JSON.stringify({
-        queueMessage,
-        sqsClient: this.sqsProvider.getSqsClient(),
-      }),
-    );
-
     await this.sqsProvider.send(queueMessage);
   }
 }

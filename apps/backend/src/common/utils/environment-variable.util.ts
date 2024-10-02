@@ -22,13 +22,8 @@ type IEnvironmentVariableList = {
   passwordHashSecret: string;
 
   // SQS Related
-  sqsNameEmail: string;
   sqsUrl: string;
-
-  // SQS AWS
   sqsAwsRegion: string;
-  sqsAwsAccessKey: string;
-  sqsAwsSecretAccessKey: string;
 
   // Feature Flag Related
 };
@@ -61,13 +56,9 @@ export class EnvironmentVariableUtil {
       passwordHashSecret:
         this.configService.get('PASSWORD_HASH_SECRET') ?? 'secret',
 
-      sqsAwsAccessKey: this.configService.get('SQS_AWS_ACCESS_KEY_ID') ?? '',
-      sqsAwsSecretAccessKey:
-        this.configService.get('SQS_AWS_SECRET_ACCESS_KEY') ?? '',
       sqsAwsRegion:
         this.configService.get('SQS_AWS_REGION') ?? 'ap-southeast-1',
 
-      sqsNameEmail: this.configService.get('SQS_NAME_EMAIL') ?? 'EmailQueue',
       sqsUrl: this.configService.get('AWS_SQS_URL') ?? '',
     };
 

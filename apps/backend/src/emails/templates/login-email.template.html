@@ -1,0 +1,36 @@
+<div style="background-color: lightblue; padding: 1rem 0">
+  <h1>Login</h1>
+</div>
+<div>
+  <div style="margin-bottom: 3rem">
+    <p>Hi {{name}},</p>
+    <p>
+      You have requested to login by using this email address. You may login by
+      clicking the button below before {{expireDateTime}}.
+    </p>
+    <a href="{{loginUrl}}">
+      <button
+        style="
+          padding: 1em 2em;
+          background-color: lightblue;
+          border-radius: 10px;
+          border-width: 1px;
+        "
+      >
+        <span style="font-weight: 700">Login to app</span>
+      </button>
+    </a>
+    <p>
+      Click this link if the button not working:
+      <a href="{{loginUrl}}">{{loginUrl}}</a>
+    </p>
+    <p>
+      If you did not request for login, please contact our support team
+      immediately by replying this email.
+    </p>
+  </div>
+  <div>
+    <p>Regards,</p>
+    <p>Rostering App Team</p>
+  </div>
+</div>

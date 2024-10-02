@@ -17,15 +17,6 @@ provider:
   memorySize: 512
   timeout: 30
   architecture: arm64
-  vpc:
-    securityGroupIds:
-      - sg-0f00203f157badb15
-      - sg-08888aa92480950a0
-      - sg-0fb392186f65514c1
-    subnetIds:
-      - subnet-03fa782274ab82e9a
-      - subnet-09968ba577be9aa97
-      - subnet-09a57e12b5c23444c
   ecr:
     images:
       backend-image:
@@ -42,6 +33,13 @@ stages:
 functions:
   api:
     image: backend-image
+    vpc:
+      securityGroupIds:
+        - sg-0f00203f157badb15
+        - sg-08888aa92480950a0
+        - sg-0fb392186f65514c1
+      subnetIds:
+        - subnet-09a57e12b5c23444c
     events:
       - httpApi: '*'
     environment:
@@ -63,6 +61,13 @@ functions:
       DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
   db-migration:
     image: db-migration-image
+    vpc:
+      securityGroupIds:
+        - sg-0f00203f157badb15
+        - sg-08888aa92480950a0
+        - sg-0fb392186f65514c1
+      subnetIds:
+        - subnet-09a57e12b5c23444c
     events:
       - eventBridge:
           pattern:
@@ -116,6 +121,7 @@ functions:
       PASSWORD_HASH_SECRET: ${self:custom.rostering_app_secret.PASSWORD_HASH_SECRET}
       SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
       SQS_AWS_REGION: ${env:SQS_AWS_REGION}
+      SES_AWS_REGION: ${env:SES_AWS_REGION}
       SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
       SQS_AWS_SECRET_ACCESS_KEY: ${self:custom.rostering_app_secret.SQS_AWS_SECRET_ACCESS_KEY}
       AWS_SQS_URL: ${self:custom.rostering_app_secret.AWS_SQS_URL}
