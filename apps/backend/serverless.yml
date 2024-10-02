@@ -49,6 +49,8 @@ functions:
       JWT_SECRET: ${self:custom.rostering_app_secret.JWT_SECRET}
       JWT_EXPIRE: ${env:JWT_EXPIRE}
       PASSWORD_HASH_SECRET: ${self:custom.rostering_app_secret.PASSWORD_HASH_SECRET}
+      CLIENT_HOST: ${env:CLIENT_HOST}
+      SERVER_HOST: ${env:SERVER_HOST}
       SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
       SQS_AWS_REGION: ${env:SQS_AWS_REGION}
       SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
@@ -119,6 +121,8 @@ functions:
       JWT_SECRET: ${self:custom.rostering_app_secret.JWT_SECRET}
       JWT_EXPIRE: ${env:JWT_EXPIRE}
       PASSWORD_HASH_SECRET: ${self:custom.rostering_app_secret.PASSWORD_HASH_SECRET}
+      CLIENT_HOST: ${env:CLIENT_HOST}
+      SERVER_HOST: ${env:SERVER_HOST}
       SQS_NAME_EMAIL: ${env:SQS_NAME_EMAIL}
       SQS_AWS_REGION: ${env:SQS_AWS_REGION}
       SES_AWS_REGION: ${env:SES_AWS_REGION}

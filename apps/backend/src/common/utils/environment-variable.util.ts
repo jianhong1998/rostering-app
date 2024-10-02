@@ -6,6 +6,8 @@ type IEnvironmentVariableList = {
   nodeEnv: string;
   buildMode: string;
   version: string;
+  clientHost: string;
+  serverHost: string;
 
   // Database Related
   databaseHost: string;
@@ -41,6 +43,10 @@ export class EnvironmentVariableUtil {
       nodeEnv: this.configService.get('NODE_ENV') ?? 'dev',
       buildMode: this.configService.get('BUILD_MODE') ?? 'tsc',
       version: this.configService.get('VERSION') ?? '-',
+      clientHost:
+        this.configService.get('CLIENT_HOST') ?? 'http://localhost:3000',
+      serverHost:
+        this.configService.get('SERVER_HOST') ?? 'http://localhost:3001',
 
       databaseHost: this.configService.get('DATABASE_HOST') ?? 'localhost',
       databasePort: this.configService.get<number>('DATABASE_PORT') ?? 5432,
