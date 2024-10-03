@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 import { hash, verify } from 'argon2';
 import { randomBytes } from 'crypto';
+import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 
 @Injectable()
 export class TokenUtil {

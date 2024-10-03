@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import {
   EntityManager,
   FindOptionsRelations,
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
+
 import { UserModel } from '../models/user.model';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserDBUtil {

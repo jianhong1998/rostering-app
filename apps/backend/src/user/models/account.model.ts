@@ -6,6 +6,7 @@ import {
   Entity,
   PrimaryColumn,
 } from 'typeorm';
+
 import { AccountType } from '../enums/account-type';
 
 @Entity('account')

@@ -1,6 +1,7 @@
 import { MessageAttributeValue } from '@aws-sdk/client-sqs';
-import { MessageAttributeDataType } from '../enums/message-attribute-data-type.enum';
+
 import { JobType } from '../enums/job-type.enum';
+import { MessageAttributeDataType } from '../enums/message-attribute-data-type.enum';
 
 type IQueueJob = {
   dataType: string;

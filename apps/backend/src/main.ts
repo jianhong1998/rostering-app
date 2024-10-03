@@ -1,9 +1,10 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import serverlessExpress from '@codegenie/serverless-express';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
 import { Handler } from 'aws-lambda';
 import cookieParser from 'cookie-parser';
-import { ConfigService } from '@nestjs/config';
+
+import { AppModule } from './app.module';
 
 let server: Handler;
 

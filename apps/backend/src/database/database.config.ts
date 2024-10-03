@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { DataSourceOptions } from 'typeorm';
+
 import { ENTITY_MODELS } from './entity-model';
 
 export default class DatabaseConfig {

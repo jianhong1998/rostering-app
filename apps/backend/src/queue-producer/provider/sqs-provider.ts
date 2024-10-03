@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
+import { Injectable } from '@nestjs/common';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
-import { IQueueMessage } from '../types/queue.type';
 import { LoggerUtil } from 'src/common/utils/logger.util';
+
+import { IQueueMessage } from '../types/queue.type';
 
 @Injectable()
 export class SqsProvider {

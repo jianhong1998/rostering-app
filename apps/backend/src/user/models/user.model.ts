@@ -7,6 +7,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
+
 import { AccountModel } from './account.model';
 
 @Entity('user')

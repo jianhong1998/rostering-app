@@ -1,13 +1,14 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
-import { Public } from 'src/common/decorators/public.decorator';
+import { addMinutes, format } from 'date-fns';
 import { Response } from 'express';
-import { AuthService } from '../services/auth.service';
-import { LoginReqBody } from '../dto/req-body/login-req-body.dto';
+import { Public } from 'src/common/decorators/public.decorator';
+import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 import { LoggerUtil } from 'src/common/utils/logger.util';
 import { LoginEmailGenerator } from 'src/emails/generator';
-import { addMinutes, format } from 'date-fns';
 import { EmailQueueProducerService } from 'src/queue-producer/services/email-producer.service';
-import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
+
+import { LoginReqBody } from '../dto/req-body/login-req-body.dto';
+import { AuthService } from '../services/auth.service';
 
 @Controller('/auth')
 export class AuthController {

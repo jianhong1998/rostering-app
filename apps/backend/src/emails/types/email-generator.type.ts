@@ -1,4 +1,5 @@
 import Mail from 'nodemailer/lib/mailer';
+
 import { IEmailParam } from './email-param.type';
 
 export interface IEmailGenerator<EmailParams extends object> {

@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { EmailQueueProducerService } from 'src/queue-producer/services/email-producer.service';
 import { AccountType } from 'src/user/enums/account-type';
 import { UserDBUtil } from 'src/user/utils/userDB.util';
+
 import { TokenUtil } from '../utils/token.util';
 
 @Injectable()

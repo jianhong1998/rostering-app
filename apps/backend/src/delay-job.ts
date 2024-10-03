@@ -1,8 +1,9 @@
 import { Handler, SQSEvent, SQSRecord } from 'aws-lambda';
-import { EventHelperUtil } from './delay-jobs/utils/event-helper.util';
+
 import { EVENT_MAP } from './delay-jobs/constants';
 import { IEventInfo } from './delay-jobs/types/event.type';
 import { DelayJobLogger } from './delay-jobs/utils/delay-job-logger.util';
+import { EventHelperUtil } from './delay-jobs/utils/event-helper.util';
 
 export const handler: Handler = async (
   event: SQSEvent,

@@ -1,7 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
-import { UserService } from '../services/user.service';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
+
+import { UserService } from '../services/user.service';
 
 @Controller('/user')
 export class UserController {

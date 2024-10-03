@@ -1,7 +1,8 @@
 import Mail from 'nodemailer/lib/mailer';
-import { IEmailParam } from 'src/emails/types/email-param.type';
-import { BaseEmailGenerator } from '../base-email-generator';
 import { IEmailGenerator } from 'src/emails/types/email-generator.type';
+import { IEmailParam } from 'src/emails/types/email-param.type';
+
+import { BaseEmailGenerator } from '../base-email-generator';
 
 interface ILoginEmailParams extends Record<string, string> {
   name: string;

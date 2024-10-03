@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { randomBytes } from 'crypto';
 import { DataSource } from 'typeorm';
+
 import DatabaseConfig from './database/database.config';
 
 export class AppConfig {

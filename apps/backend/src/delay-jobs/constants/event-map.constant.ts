@@ -1,4 +1,5 @@
 import { JobType } from 'src/queue-producer/enums/job-type.enum';
+
 import { EmailService } from '../services/email.service';
 import { IEventInfo } from '../types/event.type';
 

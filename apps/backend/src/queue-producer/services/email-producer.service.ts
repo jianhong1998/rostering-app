@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
-import { MessageAttributeDataType } from '../enums/message-attribute-data-type.enum';
+import Mail from 'nodemailer/lib/mailer';
 
 import { JobType } from '../enums/job-type.enum';
+import { MessageAttributeDataType } from '../enums/message-attribute-data-type.enum';
 import { MessageBody } from '../models/message-body.model';
-import { IQueueMessage } from '../types/queue.type';
 import { SqsProvider } from '../provider/sqs-provider';
-import Mail from 'nodemailer/lib/mailer';
+import { IQueueMessage } from '../types/queue.type';
 
 @Injectable()
 export class EmailQueueProducerService {

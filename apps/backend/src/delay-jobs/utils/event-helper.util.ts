@@ -1,6 +1,7 @@
 import { SQSRecord } from 'aws-lambda';
-import { IEventAttributes } from '../types/event-attributes.type';
 import { JobType } from 'src/queue-producer/enums/job-type.enum';
+
+import { IEventAttributes } from '../types/event-attributes.type';
 
 export class EventHelperUtil {
   private validJobTypeValueSet: Set<string>;

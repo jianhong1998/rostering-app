@@ -1,7 +1,8 @@
-import { createTransport, Transporter } from 'nodemailer';
-import { IEventBody, IEventInfo } from '../types/event.type';
 import { SES } from '@aws-sdk/client-ses';
 import * as ClientSES from '@aws-sdk/client-ses';
+import { createTransport, Transporter } from 'nodemailer';
+
+import { IEventBody, IEventInfo } from '../types/event.type';
 import { DelayJobLogger } from '../utils/delay-job-logger.util';
 
 export class EmailService {
