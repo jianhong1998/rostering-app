@@ -14,4 +14,13 @@ down:
 	@docker compose \
 		-p ${PROJECT_NAME} \
 		down
-		
+
+down/clean:
+	@docker compose \
+		-p ${PROJECT_NAME} \
+		down -v
+
+db/data/up:
+	@cd apps/backend && \
+		npm run build && \
+		npm run seed:run

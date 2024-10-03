@@ -1,23 +1,28 @@
-import { Body, Controller, Logger, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
-import { TokenUtil } from '../utils/token.util';
 import { Response } from 'express';
-import { UserDBUtil } from 'src/user/utils/userDB.util';
-import { randomUUID } from 'crypto';
-import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 import { AuthService } from '../services/auth.service';
 import { LoginReqBody } from '../dto/req-body/login-req-body.dto';
 import { LoggerUtil } from 'src/common/utils/logger.util';
+import { LoginEmailGenerator } from 'src/emails/generator';
+import { addMinutes, format } from 'date-fns';
+import { EmailQueueProducerService } from 'src/queue-producer/services/email-producer.service';
+import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 
 @Controller('/auth')
 export class AuthController {
+  emailGenerator: LoginEmailGenerator;
+  envVars: ReturnType<EnvironmentVariableUtil['getVariables']>;
+
   constructor(
-    private readonly tokenUtil: TokenUtil,
-    private readonly userDbUtil: UserDBUtil,
-    private readonly envVarUtil: EnvironmentVariableUtil,
     private readonly authService: AuthService,
     private readonly loggerUtil: LoggerUtil,
-  ) {}
+    private readonly emailQueueProducer: EmailQueueProducerService,
+    envVarUtil: EnvironmentVariableUtil,
+  ) {
+    this.emailGenerator = new LoginEmailGenerator();
+    this.envVars = envVarUtil.getVariables();
+  }
 
   @Post('/')
   @Public()
@@ -26,30 +31,35 @@ export class AuthController {
 
     const { email } = body;
 
-    const users = await this.userDbUtil.getAll({
-      relation: {
-        account: false,
+    const { hashedSecret, token, user } = await this.authService.login(email);
+
+    const expireDate = addMinutes(new Date(), 5);
+
+    const emailOptions = this.emailGenerator.generateEmailOptions({
+      addresses: {
+        from: this.envVars.emailSender,
+        replyTo: this.envVars.emailReplyTo,
+        to: email,
+      },
+      params: {
+        expireDateTime: format(expireDate, 'dd MMM yyyy HH:mm'),
+        /**@todo change to actual backend endpoint*/
+        loginUrl: 'http://localhost:3000',
+        name: user.fullName,
       },
     });
 
-    const randomUser = users[0];
-
-    const payload = {
-      userId: randomUser?.uuid ?? randomUUID(),
-    };
-
-    const tokenData = await this.tokenUtil.generateToken(payload);
-
     logger.log('Sending queue message to email queue...', 'LoginFunction');
-    await this.authService.login();
+    await this.emailQueueProducer.sendMessageToQueue(emailOptions);
     logger.log('Queue message is sent to email queue', 'LoginFunction');
 
-    res.cookie('token', tokenData.token, {
+    /**@todo move cookie sending to another endpoint that being sent via email*/
+    res.cookie('token', token, {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
     });
 
-    res.send(tokenData);
+    res.send({ hashedSecret });
   }
 }

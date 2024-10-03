@@ -7,20 +7,21 @@ import { JobType } from '../enums/job-type.enum';
 import { MessageBody } from '../models/message-body.model';
 import { IQueueMessage } from '../types/queue.type';
 import { SqsProvider } from '../provider/sqs-provider';
+import Mail from 'nodemailer/lib/mailer';
 
 @Injectable()
 export class EmailQueueProducerService {
   private queueUrl: string;
 
   constructor(
-    private readonly configService: ConfigService,
+    configService: ConfigService,
     private readonly sqsProvider: SqsProvider,
   ) {
     const queueUrl = configService.get('AWS_SQS_URL') ?? '';
     this.queueUrl = queueUrl;
   }
 
-  async sendMessageToQueue<T>(message: T) {
+  async sendMessageToQueue(message: Mail.Options) {
     const messageId = randomUUID();
     const messageBody = new MessageBody(message, JobType.SEND_EMAIL);
     const queueMessage: IQueueMessage = {

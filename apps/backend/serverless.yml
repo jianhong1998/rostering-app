@@ -61,6 +61,8 @@ functions:
       DATABASE_USER: ${self:custom.database_secret.DATABASE_USER}
       DATABASE_PASSWORD: ${self:custom.database_secret.DATABASE_PASSWORD}
       DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
+      EMAIL_SENDER: ${env:EMAIL_SENDER}
+      EMAIL_REPLY_TO: ${env:EMAIL_REPLY_TO}
   db-migration:
     image: db-migration-image
     vpc:

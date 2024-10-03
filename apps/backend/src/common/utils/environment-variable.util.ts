@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 
 type IEnvironmentVariableList = {
+  // App Operation Related
   nodeEnv: string;
   buildMode: string;
   version: string;
@@ -26,6 +27,10 @@ type IEnvironmentVariableList = {
   // SQS Related
   sqsUrl: string;
   sqsAwsRegion: string;
+
+  // Email Related
+  emailSender: string;
+  emailReplyTo: string;
 
   // Feature Flag Related
 };
@@ -58,9 +63,10 @@ export class EnvironmentVariableUtil {
       jwtSecret:
         this.configService.get('JWT_SECRET') ?? randomBytes(16).toString('hex'),
       jwtExpire: this.configService.get('JWT_EXPIRE') ?? '15 mins',
-
       passwordHashSecret:
         this.configService.get('PASSWORD_HASH_SECRET') ?? 'secret',
+      emailSender: this.configService.get('EMAIL_SENDER') ?? '',
+      emailReplyTo: this.configService.get('EMAIL_REPLY_TO') ?? '',
 
       sqsAwsRegion:
         this.configService.get('SQS_AWS_REGION') ?? 'ap-southeast-1',
