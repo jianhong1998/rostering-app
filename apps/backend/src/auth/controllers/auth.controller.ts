@@ -1,48 +1,95 @@
-import { Controller, Logger, Post, Res } from '@nestjs/common';
-import { Public } from 'src/common/decorators/public.decorator';
-import { TokenUtil } from '../utils/token.util';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { addMinutes, format } from 'date-fns';
 import { Response } from 'express';
-import { UserDBUtil } from 'src/user/utils/userDB.util';
-import { randomUUID } from 'crypto';
+import { Public } from 'src/common/decorators/public.decorator';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
+import { LoggerUtil } from 'src/common/utils/logger.util';
+import { LoginEmailGenerator } from 'src/emails/generator';
+import { EmailQueueProducerService } from 'src/queue-producer/services/email-producer.service';
+import { EntityManager } from 'typeorm';
+
+import { LoginReqBody } from '../dto/req-body/login-req-body.dto';
 import { AuthService } from '../services/auth.service';
+import { TempTokenService } from '../services/temp-token.service';
 
 @Controller('/auth')
 export class AuthController {
+  emailGenerator: LoginEmailGenerator;
+  envVars: ReturnType<EnvironmentVariableUtil['getVariables']>;
+
   constructor(
-    private readonly tokenUtil: TokenUtil,
-    private readonly userDbUtil: UserDBUtil,
-    private readonly envVarUtil: EnvironmentVariableUtil,
     private readonly authService: AuthService,
-  ) {}
+    private readonly loggerUtil: LoggerUtil,
+    private readonly emailQueueProducer: EmailQueueProducerService,
+    private readonly tempTokenService: TempTokenService,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
+    envVarUtil: EnvironmentVariableUtil,
+  ) {
+    this.emailGenerator = new LoginEmailGenerator();
+    this.envVars = envVarUtil.getVariables();
+  }
 
   @Post('/')
   @Public()
-  async login(@Res() res: Response) {
-    const users = await this.userDbUtil.getAll({
-      relation: {
-        account: false,
-      },
+  async login(@Body() body: LoginReqBody) {
+    const logger = this.loggerUtil.createLogger('LoginFunction');
+
+    const { email } = body;
+    const expireDate = addMinutes(new Date(), 5);
+    const { emailSender, emailReplyTo, serverHost } = this.envVars;
+
+    await this.entityManager.transaction(async (manager) => {
+      const { user } = await this.authService.login(email);
+      const token = await this.tempTokenService.generateTempToken({
+        user,
+        manager,
+      });
+
+      const emailOptions = this.emailGenerator.generateEmailOptions({
+        addresses: {
+          from: emailSender,
+          replyTo: emailReplyTo,
+          to: email,
+        },
+        params: {
+          expireDateTime: format(expireDate, 'dd MMM yyyy HH:mm'),
+          loginUrl: `${serverHost}/auth?id=${token}`,
+          name: user.fullName,
+        },
+      });
+
+      logger.log('Sending queue message to email queue...', 'LoginFunction');
+      await this.emailQueueProducer.sendMessageToQueue(emailOptions);
+      logger.log('Queue message is sent to email queue', 'LoginFunction');
     });
 
-    const randomUser = users[0];
+    return { isSuccess: true };
+  }
 
-    const payload = {
-      userId: randomUser?.uuid ?? randomUUID(),
-    };
+  @Get('/')
+  @Public()
+  async getToken(@Query('id') tempTokenId: string, @Res() res: Response) {
+    if (!tempTokenId)
+      throw new BadRequestException(`Invalid id: ${tempTokenId}`);
 
-    const tokenData = await this.tokenUtil.generateToken(payload);
+    const { token, hashedSecret } =
+      await this.authService.getActualToken(tempTokenId);
 
-    Logger.log('Sending queue message to email queue...', 'LoginFunction');
-    await this.authService.login();
-    Logger.log('Queue message is sent to email queue', 'LoginFunction');
-
-    res.cookie('token', tokenData.token, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-    });
-
-    res.send(tokenData);
+    res
+      .cookie('token', token, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      })
+      .send({ hashedSecret });
   }
 }

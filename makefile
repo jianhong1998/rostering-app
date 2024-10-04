@@ -14,4 +14,22 @@ down:
 	@docker compose \
 		-p ${PROJECT_NAME} \
 		down
-		
+
+down/clean:
+	@docker compose \
+		-p ${PROJECT_NAME} \
+		down -v
+	@rm -rf postgres-data
+
+db/data/up:
+	@cd apps/backend && \
+		npm run build && \
+		npm run seed:run
+
+# ======================================================================
+# example: make db/migration/generate name=init
+# ======================================================================
+db/migration/generate:
+	@cd apps/backend && \
+		npm run build && \
+		npm run migration:generate --name=${name}

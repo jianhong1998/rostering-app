@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserDBUtil } from '../utils/userDB.util';
 import { EntityManager, FindOptionsRelations, FindOptionsWhere } from 'typeorm';
+
 import { UserModel } from '../models/user.model';
+import { UserDBUtil } from '../utils/userDB.util';
 
 @Injectable()
 export class UserService {

@@ -1,31 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import { LoginEmailGenerator } from 'src/emails/generator';
-import { EmailQueueProducerService } from 'src/queue-producer/services/email-producer.service';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { AccountType } from 'src/user/enums/account-type';
+import { UserDBUtil } from 'src/user/utils/userDB.util';
+
+import { TokenUtil } from '../utils/token.util';
+import { TempTokenService } from './temp-token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly QueueProducerService: EmailQueueProducerService,
+    private readonly userDBUtil: UserDBUtil,
+    private readonly tokenUtil: TokenUtil,
+    private readonly tempTokenService: TempTokenService,
   ) {}
 
-  public async login() {
-    const sender = 'jiyue0904@gmail.com';
-    const recipient = 'jianhong@mavericks-consulting.com';
-    const replyTo = 'jiyuesg@gmail.com';
-
-    const message = new LoginEmailGenerator().generateEmailOptions({
-      addresses: {
-        to: recipient,
-        from: sender,
-        replyTo,
+  public async login(email: string) {
+    const user = await this.userDBUtil.getOne({
+      criterial: {
+        account: {
+          email,
+          accountType: AccountType.EMAIL,
+        },
       },
-      params: {
-        expireDateTime: '2024-01-01 12:00PM',
-        loginUrl: 'http://localhost:3001',
-        name: 'Jian Hong',
+      relation: {
+        account: true,
       },
     });
 
-    await this.QueueProducerService.sendMessageToQueue(message);
+    if (!user) throw new UnauthorizedException('Email is not registered.');
+
+    return { user };
+  }
+
+  public async getActualToken(tempTokenId: string) {
+    const user = await this.tempTokenService.extractDataFromToken({
+      tokenId: tempTokenId,
+    });
+
+    if (!user)
+      throw new UnauthorizedException('Invalid token or token expired');
+
+    const payload = {
+      userId: user.uuid,
+    };
+
+    const { hashedSecret, token } = await this.tokenUtil.generateToken(payload);
+
+    await this.tempTokenService.deleteTempToken({ tokenId: tempTokenId });
+
+    return { hashedSecret, token };
   }
 }

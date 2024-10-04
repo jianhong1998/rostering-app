@@ -4,8 +4,9 @@ import {
   Column,
   DeleteDateColumn,
   Entity,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+
 import { AccountType } from '../enums/account-type';
 
 @Entity('account')
@@ -14,10 +15,7 @@ import { AccountType } from '../enums/account-type';
   `"account_type" = 'EMAIL' AND "hashed_password" IS NOT NULL`,
 )
 export class AccountModel extends BaseEntity {
-  @PrimaryColumn({
-    type: 'uuid',
-    nullable: false,
-  })
+  @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
   @Column({

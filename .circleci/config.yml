@@ -26,6 +26,8 @@ commands:
             cd apps/backend
             echo "NODE_ENV=\"<< parameters.env_type >>\"" >> .env
             echo "BUILD_MODE=\"swc\"" >> .env
+            echo "CLIENT_HOST=\"${<< parameters.stage >>_CLIENT_HOST}\"" >> .env
+            echo "SERVER_HOST=\"${<< parameters.stage >>_SERVER_HOST}\"" >> .env
             echo "VERSION=${<< parameters.stage >>_VERSION}" >> .env
             echo "DATABASE_HOST=\"${<< parameters.stage >>_DATABASE_HOST}\"" >> .env
             echo "DATABASE_PORT=\"${<< parameters.stage >>_DATABASE_PORT}\"" >> .env
@@ -35,6 +37,8 @@ commands:
             echo "JWT_EXPIRE=\"${<< parameters.stage >>_JWT_EXPIRE}\"" >> .env
             echo "JWT_SECRET=\"${<< parameters.stage >>_JWT_SECRET}\"" >> .env
             echo "PASSWORD_HASH_SECRET=\"${<< parameters.stage >>_PASSWORD_HASH_SECRET}\"" >> .env
+            echo "EMAIL_SENDER=\"${<< parameters.stage >>_EMAIL_SENDER}\"" >> .env
+            echo "EMAIL_REPLY_TO=\"${<< parameters.stage >>_EMAIL_REPLY_TO}\"" >> .env
             echo "SQS_NAME_EMAIL=\"${<< parameters.stage >>_SQS_NAME_EMAIL}\"" >> .env
             echo "SERVERLESS_SQS_ARN=\"${<< parameters.stage >>_SERVERLESS_SQS_ARN}\"" >> .env
             echo "SQS_AWS_REGION=\"${<< parameters.stage >>_SQS_AWS_REGION}\"" >> .env

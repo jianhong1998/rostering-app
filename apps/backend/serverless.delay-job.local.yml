@@ -31,7 +31,6 @@ functions:
     events:
       - sqs:
           arn: ${env:SERVERLESS_SQS_ARN}
-      - httpApi: '*'
 
 custom:
   serverless-offline-sqs:

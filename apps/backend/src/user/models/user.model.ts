@@ -5,16 +5,14 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+
 import { AccountModel } from './account.model';
 
 @Entity('user')
 export class UserModel extends BaseEntity {
-  @PrimaryColumn({
-    type: 'uuid',
-    nullable: false,
-  })
+  @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
   @Column({
@@ -43,7 +41,7 @@ export class UserModel extends BaseEntity {
   })
   deletedAt: Date | null;
 
-  @OneToOne(() => AccountModel)
+  @OneToOne(() => AccountModel, { onDelete: 'CASCADE' })
   @JoinColumn()
   account?: AccountModel;
 }

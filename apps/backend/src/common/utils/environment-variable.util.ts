@@ -3,9 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 
 type IEnvironmentVariableList = {
+  // App Operation Related
   nodeEnv: string;
   buildMode: string;
   version: string;
+  clientHost: string;
+  serverHost: string;
 
   // Database Related
   databaseHost: string;
@@ -25,6 +28,10 @@ type IEnvironmentVariableList = {
   sqsUrl: string;
   sqsAwsRegion: string;
 
+  // Email Related
+  emailSender: string;
+  emailReplyTo: string;
+
   // Feature Flag Related
 };
 
@@ -41,6 +48,10 @@ export class EnvironmentVariableUtil {
       nodeEnv: this.configService.get('NODE_ENV') ?? 'dev',
       buildMode: this.configService.get('BUILD_MODE') ?? 'tsc',
       version: this.configService.get('VERSION') ?? '-',
+      clientHost:
+        this.configService.get('CLIENT_HOST') ?? 'http://localhost:3000',
+      serverHost:
+        this.configService.get('SERVER_HOST') ?? 'http://localhost:3001',
 
       databaseHost: this.configService.get('DATABASE_HOST') ?? 'localhost',
       databasePort: this.configService.get<number>('DATABASE_PORT') ?? 5432,
@@ -52,9 +63,10 @@ export class EnvironmentVariableUtil {
       jwtSecret:
         this.configService.get('JWT_SECRET') ?? randomBytes(16).toString('hex'),
       jwtExpire: this.configService.get('JWT_EXPIRE') ?? '15 mins',
-
       passwordHashSecret:
         this.configService.get('PASSWORD_HASH_SECRET') ?? 'secret',
+      emailSender: this.configService.get('EMAIL_SENDER') ?? '',
+      emailReplyTo: this.configService.get('EMAIL_REPLY_TO') ?? '',
 
       sqsAwsRegion:
         this.configService.get('SQS_AWS_REGION') ?? 'ap-southeast-1',

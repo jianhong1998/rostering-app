@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
-import { IMessageBody } from '../types/queue.type';
+
 import { JobType } from '../enums/job-type.enum';
+import { IMessageBody } from '../types/queue.type';
 
 export class MessageBody<T> implements IMessageBody<T> {
   date: string;
