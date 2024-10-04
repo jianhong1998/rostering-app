@@ -1,96 +1,100 @@
 services:
-  postgres:
-    container_name: database
-    image: postgres:16.4-alpine3.20
-    ports:
-      - '5433:5432'
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: rostering_app_dev
-      POSTGRES_PASSWORD: postgres
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -d rostering_app_db']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    postgres:
+        container_name: database
+        image: postgres:16.4-alpine3.20
+        ports:
+            - '5433:5432'
+        volumes:
+            - ./postgres-data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_DB: rostering_app_db
+            POSTGRES_PASSWORD: postgres
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U postgres -d rostering_app_db']
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  backend:
-    container_name: backend-app
-    build:
-      context: ./apps/backend
-      dockerfile: deploy/local/Dockerfile
-      target: backend
-    env_file:
-      - ./apps/backend/.env
-    network_mode: host
-    depends_on:
-      postgres:
-        condition: service_healthy
-    develop:
-      watch:
-        - path: ./apps/backend/src
-          action: rebuild
-        - path: ./apps/backend/.env
-          action: rebuild
-        - path: ./apps/backend/package.json
-          action: rebuild
-    healthcheck:
-      test: ['CMD-SHELL', 'curl -sS http://localhost:3001/version || exit 1']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    backend:
+        container_name: backend-app
+        build:
+            context: ./apps/backend
+            dockerfile: deploy/local/Dockerfile
+            target: backend
+        env_file:
+            - ./apps/backend/.env
+        network_mode: host
+        depends_on:
+            postgres:
+                condition: service_healthy
+        develop:
+            watch:
+                - path: ./apps/backend/src
+                  action: rebuild
+                - path: ./apps/backend/.env
+                  action: rebuild
+                - path: ./apps/backend/package.json
+                  action: rebuild
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'curl -sS http://localhost:3001/version || exit 1',
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  db-migration-service:
-    container_name: db-migration
-    build:
-      context: ./apps/backend
-      dockerfile: deploy/local/Dockerfile
-      target: db-migrate
-    env_file:
-      - ./apps/backend/.env
-    network_mode: host
-    depends_on:
-      postgres:
-        condition: service_healthy
+    db-migration-service:
+        container_name: db-migration
+        build:
+            context: ./apps/backend
+            dockerfile: deploy/local/Dockerfile
+            target: db-migrate
+        env_file:
+            - ./apps/backend/.env
+        network_mode: host
+        depends_on:
+            postgres:
+                condition: service_healthy
 
-  delay-job:
-    container_name: delay-job
-    build:
-      context: ./apps/backend
-      dockerfile: deploy/local/Dockerfile
-      target: delay-job
-    env_file:
-      - ./apps/backend/.env
-    network_mode: host
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: ['CMD-SHELL', 'curl -sS http://localhost:3005 || exit 1']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    develop:
-      watch:
-        - path: ./apps/backend/src
-          action: rebuild
-        - path: ./apps/backend/.env
-          action: rebuild
-        - path: ./apps/backend/package.json
-          action: rebuild
+    delay-job:
+        container_name: delay-job
+        build:
+            context: ./apps/backend
+            dockerfile: deploy/local/Dockerfile
+            target: delay-job
+        env_file:
+            - ./apps/backend/.env
+        network_mode: host
+        depends_on:
+            postgres:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD-SHELL', 'curl -sS http://localhost:3005 || exit 1']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        develop:
+            watch:
+                - path: ./apps/backend/src
+                  action: rebuild
+                - path: ./apps/backend/.env
+                  action: rebuild
+                - path: ./apps/backend/package.json
+                  action: rebuild
 
-  frontend:
-    container_name: frontend-app
-    build:
-      context: ./apps/frontend
-      dockerfile: deploy/local/Dockerfile
-    network_mode: host
-    develop:
-      watch:
-        - path: ./apps/frontend/src
-          action: sync
-          target: /usr/apps/frontend/src
-        - path: ./apps/frontend/package.json
-          action: rebuild
+    frontend:
+        container_name: frontend-app
+        build:
+            context: ./apps/frontend
+            dockerfile: deploy/local/Dockerfile
+        network_mode: host
+        develop:
+            watch:
+                - path: ./apps/frontend/src
+                  action: sync
+                  target: /usr/apps/frontend/src
+                - path: ./apps/frontend/package.json
+                  action: rebuild

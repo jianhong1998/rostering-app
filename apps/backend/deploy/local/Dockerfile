@@ -90,4 +90,4 @@ COPY --from=delay-job-build /usr/apps/backend/serverless.delay-job.local.yml ./
 COPY --from=delay-job-build /usr/apps/backend/.env ./
 COPY --from=delay-job-build /usr/apps/backend/package*.json ./
 
-CMD ["sh", "-c", "npx serverless offline start -c serverless.delay-job.local.yml --lambdaPort 3004 --httpPort 3005"]
+CMD ["sh", "-c", "npx serverless offline start -c serverless.delay-job.local.yml --lambdaPort 3004"]
