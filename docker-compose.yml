@@ -98,3 +98,5 @@ services:
                   target: /usr/apps/frontend/src
                 - path: ./apps/frontend/package.json
                   action: rebuild
+                - path: ./apps/frontend/.env
+                  action: rebuild

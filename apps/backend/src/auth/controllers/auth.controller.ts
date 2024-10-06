@@ -46,7 +46,7 @@ export class AuthController {
 
     const { email } = body;
     const expireDate = addMinutes(new Date(), 5);
-    const { emailSender, emailReplyTo, serverHost } = this.envVars;
+    const { emailSender, emailReplyTo, clientHost } = this.envVars;
 
     await this.entityManager.transaction(async (manager) => {
       const { user } = await this.authService.login(email);
@@ -68,7 +68,7 @@ export class AuthController {
         },
         params: {
           expireDateTime: `${expireDateTime} (SGT)`,
-          loginUrl: `${serverHost}/auth?id=${token}`,
+          loginUrl: `${clientHost}/auth?id=${token}`,
           name: user.fullName,
         },
       });

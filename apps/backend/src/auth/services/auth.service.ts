@@ -45,7 +45,8 @@ export class AuthService {
 
     const { hashedSecret, token } = await this.tokenUtil.generateToken(payload);
 
-    await this.tempTokenService.deleteTempToken({ tokenId: tempTokenId });
+    /**@todo remporary commented, uncomment it do not push*/
+    // await this.tempTokenService.deleteTempToken({ tokenId: tempTokenId });
 
     return { hashedSecret, token };
   }
