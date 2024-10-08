@@ -1,5 +1,6 @@
 type IEnvironmentVariableList = {
   serverHost: string;
+  clientHost: string;
 };
 
 export class EnvironmentVariableUtil {
@@ -10,6 +11,7 @@ export class EnvironmentVariableUtil {
   private constructor() {
     this.envVars = {
       serverHost: process.env.SERVER_HOST ?? 'http://localhost:3001',
+      clientHost: process.env.CLIENT_HOST ?? 'http://localhost:3000',
     };
   }
 

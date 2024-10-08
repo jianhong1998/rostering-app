@@ -1,37 +1,39 @@
-'use server';
-
+import { ServerAxiosClient } from '@/utils/axios-client';
 import { EnvironmentVariableUtil } from '@/utils/environment-variable.util';
-import axios, { isAxiosError } from 'axios';
-import { cookies } from 'next/headers';
+import { isAxiosError } from 'axios';
+import { redirect } from 'next/navigation';
 import { NextRequest } from 'next/server';
 
 export const GET = async (req: NextRequest) => {
-  const { serverHost } = EnvironmentVariableUtil.getEnvVarList();
-  const url = `${serverHost}/auth`;
+  const url = `auth`;
   const { searchParams } = req.nextUrl;
   const tokenId = searchParams.get('id');
-
-  const cookieStore = cookies();
+  const { clientHost } = EnvironmentVariableUtil.getEnvVarList();
 
   try {
-    const response = await axios.get<{ hashedSecret: string }>(url, {
+    const { headers, data } = await ServerAxiosClient.get<{
+      hashedSecret: string;
+    }>(url, {
       params: {
         id: tokenId,
       },
     });
 
-    const cookies = response.headers['set-cookie'];
-    cookies?.map((cookie) => {
-      const stringArr = cookie.split('=');
-      const key = stringArr[0];
-      const value = stringArr.filter((_, index) => index !== 0).join('');
+    const cookieString = headers['set-cookie']?.join(';') ?? '';
 
-      cookieStore.set(key, value, { httpOnly: true });
-    });
+    const { hashedSecret } = data;
 
-    const { hashedSecret } = response.data;
+    const res = Response.json(
+      { hashedSecret },
+      {
+        status: 200,
+        headers: {
+          'Set-Cookie': cookieString,
+        },
+      },
+    );
 
-    return Response.json({ hashedSecret }, { status: 200 });
+    return res;
   } catch (error) {
     let resStatus: number;
     let errorCode: string;

@@ -1,5 +1,8 @@
-import { FC } from 'react';
+'use client';
+
+import { FC, useEffect } from 'react';
 import { getToken } from './action';
+import { useRouter } from 'next/navigation';
 
 interface PageProps {
   params: {
@@ -7,11 +10,14 @@ interface PageProps {
   };
 }
 
-const Page: FC<PageProps> = async ({ params: { tokenId } }) => {
-  const getTokenResponse = await getToken(tokenId);
-  const data = await getTokenResponse.json();
+const Page: FC<PageProps> = ({ params: { tokenId } }) => {
+  const router = useRouter();
 
-  console.log({ data });
+  useEffect(() => {
+    getToken(tokenId).then(() => {
+      router.replace('/');
+    });
+  }, [tokenId]);
 
   return (
     <>
