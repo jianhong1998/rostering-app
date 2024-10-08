@@ -1,3 +1,8 @@
-import { Axios } from 'axios';
+import axios from 'axios';
+import { EnvironmentVariableUtil } from './environment-variable.util';
 
-export const AxiosClient = new Axios();
+const { serverHost } = EnvironmentVariableUtil.getEnvVarList();
+
+export const AxiosClient = axios.create({
+  baseURL: `${serverHost}`,
+});

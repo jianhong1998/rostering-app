@@ -9,7 +9,7 @@ export class EnvironmentVariableUtil {
 
   private constructor() {
     this.envVars = {
-      serverHost: process.env.SERVER_HOST ?? 'http://locahost:3001',
+      serverHost: process.env.SERVER_HOST ?? 'http://localhost:3001',
     };
   }
 

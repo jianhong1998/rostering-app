@@ -68,7 +68,7 @@ export class AuthController {
         },
         params: {
           expireDateTime: `${expireDateTime} (SGT)`,
-          loginUrl: `${clientHost}/auth?id=${token}`,
+          loginUrl: `${clientHost}/auth/${token}`,
           name: user.fullName,
         },
       });
