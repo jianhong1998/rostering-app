@@ -1,16 +1,8 @@
 import { JobType } from 'src/queue-producer/enums/job-type.enum';
 
-import { EmailService } from '../services/email.service';
-import { IEventInfo } from '../types/event.type';
+import { sendEmailEventHandler } from '../handler/send-email.handler';
+import { EventHandler } from '../types/event-handler.type';
 
-export const EVENT_MAP = new Map<
-  string,
-  (eventRecord: IEventInfo) => Promise<void>
->([
-  [
-    JobType.SEND_EMAIL,
-    async (event) => {
-      await EmailService.handleSendEmail(event);
-    },
-  ],
+export const EVENT_MAP = new Map<string, EventHandler>([
+  [JobType.SEND_EMAIL, sendEmailEventHandler],
 ]);

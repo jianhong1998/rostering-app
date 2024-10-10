@@ -31,13 +31,17 @@ type IEnvironmentVariableList = {
   // Email Related
   emailSender: string;
   emailReplyTo: string;
+};
 
+type IFeatureFlagList = {
   // Feature Flag Related
+  enablePostmarkEmailService: boolean;
 };
 
 @Injectable()
 export class EnvironmentVariableUtil {
   private environmentVariableList: IEnvironmentVariableList | undefined;
+  private featureFlagList: IFeatureFlagList | undefined;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -75,5 +79,17 @@ export class EnvironmentVariableUtil {
     };
 
     return this.environmentVariableList;
+  }
+
+  public getFeatureFlags(): IFeatureFlagList {
+    if (!this.featureFlagList) {
+      this.featureFlagList = {
+        enablePostmarkEmailService:
+          this.configService.get<boolean>('ENABLE_POSTMARK_EMAIL_SERVICE') ??
+          false,
+      };
+    }
+
+    return this.featureFlagList;
   }
 }
