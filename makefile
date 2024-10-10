@@ -14,12 +14,17 @@ down:
 	@docker compose \
 		-p ${PROJECT_NAME} \
 		down
+	@$(MAKE) docker/image/clean
 
 down/clean:
 	@docker compose \
 		-p ${PROJECT_NAME} \
 		down -v
 	@rm -rf postgres-data
+	@$(MAKE) docker/image/clean
+
+docker/image/clean:
+	@docker image prune -f
 
 db/data/up:
 	@cd apps/backend && \

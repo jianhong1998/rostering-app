@@ -8,9 +8,10 @@ import {
   Res,
 } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { addMinutes, format } from 'date-fns';
+import { addMinutes } from 'date-fns';
 import { Response } from 'express';
 import { Public } from 'src/common/decorators/public.decorator';
+import { DateTimeHelper } from 'src/common/helpers/datetime.helper';
 import { EnvironmentVariableUtil } from 'src/common/utils/environment-variable.util';
 import { LoggerUtil } from 'src/common/utils/logger.util';
 import { LoginEmailGenerator } from 'src/emails/generator';
@@ -54,6 +55,11 @@ export class AuthController {
         manager,
       });
 
+      const expireDateTime = DateTimeHelper.format(
+        expireDate,
+        'dd MMM yyyy HH:mm',
+      );
+
       const emailOptions = this.emailGenerator.generateEmailOptions({
         addresses: {
           from: emailSender,
@@ -61,7 +67,7 @@ export class AuthController {
           to: email,
         },
         params: {
-          expireDateTime: format(expireDate, 'dd MMM yyyy HH:mm'),
+          expireDateTime: `${expireDateTime} (SGT)`,
           loginUrl: `${serverHost}/auth?id=${token}`,
           name: user.fullName,
         },
