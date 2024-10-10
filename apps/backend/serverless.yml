@@ -55,6 +55,7 @@ functions:
       SQS_AWS_REGION: ${env:SQS_AWS_REGION}
       SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
       SQS_AWS_SECRET_ACCESS_KEY: ${self:custom.rostering_app_secret.SQS_AWS_SECRET_ACCESS_KEY}
+      POSTMARK_SERVER_TOKEN: ${self:custom.rostering_app_secret.POSTMARK_SERVER_TOKEN}
       AWS_SQS_URL: ${self:custom.rostering_app_secret.AWS_SQS_URL}
       DATABASE_HOST: ${self:custom.database_secret.DATABASE_HOST}
       DATABASE_PORT: ${self:custom.database_secret.DATABASE_PORT}
@@ -63,6 +64,7 @@ functions:
       DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
       EMAIL_SENDER: ${env:EMAIL_SENDER}
       EMAIL_REPLY_TO: ${env:EMAIL_REPLY_TO}
+      ENABLE_POSTMARK_EMAIL_SERVICE: ${env:ENABLE_POSTMARK_EMAIL_SERVICE}
   db-migration:
     image: db-migration-image
     vpc:
@@ -130,12 +132,14 @@ functions:
       SES_AWS_REGION: ${env:SES_AWS_REGION}
       SQS_AWS_ACCESS_KEY_ID: ${self:custom.rostering_app_secret.SQS_AWS_ACCESS_KEY_ID}
       SQS_AWS_SECRET_ACCESS_KEY: ${self:custom.rostering_app_secret.SQS_AWS_SECRET_ACCESS_KEY}
+      POSTMARK_SERVER_TOKEN: ${self:custom.rostering_app_secret.POSTMARK_SERVER_TOKEN}
       AWS_SQS_URL: ${self:custom.rostering_app_secret.AWS_SQS_URL}
       DATABASE_HOST: ${self:custom.database_secret.DATABASE_HOST}
       DATABASE_PORT: ${self:custom.database_secret.DATABASE_PORT}
       DATABASE_USER: ${self:custom.database_secret.DATABASE_USER}
       DATABASE_PASSWORD: ${self:custom.database_secret.DATABASE_PASSWORD}
       DATABASE_DB: ${self:custom.rostering_app_secret.DATABASE_DB}
+      ENABLE_POSTMARK_EMAIL_SERVICE: ${env:ENABLE_POSTMARK_EMAIL_SERVICE}
 
 custom:
   rostering_app_secret: ${ssm:/aws/reference/secretsmanager/rostering-app/${opt:stage}}
