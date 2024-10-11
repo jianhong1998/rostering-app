@@ -31,9 +31,8 @@ services:
     develop:
       watch:
         - path: ./apps/backend/src
-          action: rebuild
-        - path: ./apps/backend/.env
-          action: rebuild
+          target: /usr/apps/backend/src
+          action: sync+restart
         - path: ./apps/backend/package.json
           action: rebuild
     healthcheck:
@@ -75,9 +74,8 @@ services:
     develop:
       watch:
         - path: ./apps/backend/src
-          action: rebuild
-        - path: ./apps/backend/.env
-          action: rebuild
+          target: /usr/apps/backend/src
+          action: sync+restart
         - path: ./apps/backend/package.json
           action: rebuild
 
@@ -93,6 +91,4 @@ services:
           action: sync
           target: /usr/apps/frontend/src
         - path: ./apps/frontend/package.json
-          action: rebuild
-        - path: ./apps/frontend/.env
           action: rebuild

@@ -7,8 +7,9 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "build:swc": "nest build -b swc --type-check",
-    "dev": "sls offline --httpPort 3001",
+    "build:swc": "nest build -b swc --type-check && cp -r ./src/emails/templates ./dist/emails/templates",
+    "dev": "serverless offline start -c serverless.backend.local.yml --httpPort 3001",
+    "delayjob:dev": "serverless offline start -c serverless.delay-job.local.yml --lambdaPort 3004",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
