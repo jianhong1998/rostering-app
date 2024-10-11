@@ -9,7 +9,9 @@ export default setSeederFactory(AccountModel, async (faker) => {
 
   account.uuid = randomUUID();
   account.accountType = AccountType.EMAIL;
-  account.email = faker.internet.email({ provider: 'example.com' });
+  account.email = faker.internet
+    .email({ provider: 'jianhong.link' })
+    .toLowerCase();
   account.hashedPassword = await hash('password', {
     secret: Buffer.from(process.env.PASSWORD_HASH_SECRET ?? ''),
   });

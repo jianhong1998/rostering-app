@@ -43,7 +43,7 @@ export class User1726575245506 implements Seeder {
       const userAccount = new AccountModel();
       userAccount.uuid = randomUUID();
       userAccount.accountType = AccountType.EMAIL;
-      userAccount.email = 'jianhong@mavericks-consulting.com';
+      userAccount.email = 'jianhong@jianhong.link';
       userAccount.hashedPassword = '';
       await manager.save([userAccount]);
 
