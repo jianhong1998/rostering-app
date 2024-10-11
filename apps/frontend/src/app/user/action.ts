@@ -1,7 +1,8 @@
 'use server';
 
-import { ServerAxiosClient } from '@/utils/axios-client';
 import { cookies } from 'next/headers';
+
+import { ServerAxiosClient } from '@/utils/axios-client';
 
 export const getUser = async (authKey: string) => {
   const useCookie = cookies();

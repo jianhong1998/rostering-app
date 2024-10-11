@@ -1,8 +1,9 @@
 'use client';
 
-import { FC, useEffect } from 'react';
-import { getToken } from './action';
 import { useRouter } from 'next/navigation';
+import { FC, useEffect } from 'react';
+
+import { getToken } from './action';
 
 interface PageProps {
   params: {
@@ -17,7 +18,7 @@ const Page: FC<PageProps> = ({ params: { tokenId } }) => {
     getToken(tokenId).then(() => {
       router.replace('/');
     });
-  }, [tokenId]);
+  }, [tokenId, router]);
 
   return (
     <>

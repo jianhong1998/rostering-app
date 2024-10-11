@@ -1,14 +1,12 @@
-import { ServerAxiosClient } from '@/utils/axios-client';
-import { EnvironmentVariableUtil } from '@/utils/environment-variable.util';
 import { isAxiosError } from 'axios';
-import { redirect } from 'next/navigation';
 import { NextRequest } from 'next/server';
+
+import { ServerAxiosClient } from '@/utils/axios-client';
 
 export const GET = async (req: NextRequest) => {
   const url = `auth`;
   const { searchParams } = req.nextUrl;
   const tokenId = searchParams.get('id');
-  const { clientHost } = EnvironmentVariableUtil.getEnvVarList();
 
   try {
     const { headers, data } = await ServerAxiosClient.get<{

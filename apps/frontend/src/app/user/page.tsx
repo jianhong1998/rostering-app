@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, useCallback, useEffect } from 'react';
+
 import { getUser } from './action';
 
 const UserPage: FC = () => {
@@ -13,7 +14,7 @@ const UserPage: FC = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [getData]);
 
   return <h1>User Page</h1>;
 };

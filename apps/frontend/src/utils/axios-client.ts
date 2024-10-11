@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { EnvironmentVariableUtil } from './environment-variable.util';
 
 const { serverHost, clientHost } = EnvironmentVariableUtil.getEnvVarList();
