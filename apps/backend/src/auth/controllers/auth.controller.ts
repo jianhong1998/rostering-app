@@ -19,6 +19,7 @@ import { EmailQueueProducerService } from 'src/queue-producer/services/email-pro
 import { EntityManager } from 'typeorm';
 
 import { LoginReqBody } from '../dto/req-body/login-req-body.dto';
+import { VerifyTokenReqBodyDTO } from '../dto/req-body/verify-token-req-body.dto';
 import { AuthService } from '../services/auth.service';
 import { TempTokenService } from '../services/temp-token.service';
 
@@ -46,7 +47,7 @@ export class AuthController {
 
     const { email } = body;
     const expireDate = addMinutes(new Date(), 5);
-    const { emailSender, emailReplyTo, serverHost } = this.envVars;
+    const { emailSender, emailReplyTo, clientHost } = this.envVars;
 
     await this.entityManager.transaction(async (manager) => {
       const { user } = await this.authService.login(email);
@@ -68,7 +69,7 @@ export class AuthController {
         },
         params: {
           expireDateTime: `${expireDateTime} (SGT)`,
-          loginUrl: `${serverHost}/auth?id=${token}`,
+          loginUrl: `${clientHost}/auth/${token}`,
           name: user.fullName,
         },
       });
@@ -79,6 +80,16 @@ export class AuthController {
     });
 
     return { isSuccess: true };
+  }
+
+  @Post('/verify')
+  @Public()
+  async verifyToken(@Body() body: VerifyTokenReqBodyDTO) {
+    const { token } = body;
+
+    const isTokenValid = await this.authService.verifyToken(token);
+
+    return { isTokenValid };
   }
 
   @Get('/')

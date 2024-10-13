@@ -49,4 +49,8 @@ export class AuthService {
 
     return { hashedSecret, token };
   }
+
+  public async verifyToken(token: string): Promise<boolean> {
+    return this.tokenUtil.verifyTokenWithoutSecret(token);
+  }
 }

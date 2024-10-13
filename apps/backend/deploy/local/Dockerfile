@@ -1,15 +1,14 @@
 # =======================================================
-# Build Stage
+# Backend Final Stage
 # =======================================================
-FROM node:20.15.1-slim AS backend-build
+FROM node:20.15.1-slim AS backend
 WORKDIR /usr/apps/backend
 
 COPY package*.json .
 RUN npm ci
-
+RUN npm i serverless-offline serverless-offline-sqs
 COPY . .
-RUN npm run build:swc
-COPY ./src/emails/templates ./dist/emails/templates
+CMD [ "sh", "-c", "npm run build:swc && npm run dev" ]
 
 # =======================================================
 # Install Stage
@@ -19,24 +18,6 @@ WORKDIR /usr/apps/backend
 
 COPY package*.json .
 RUN npm ci --omit=dev
-RUN npm i serverless-offline serverless-offline-sqs
-
-# =======================================================
-# Backend Final Stage
-# =======================================================
-FROM node:20.15.1-slim AS backend
-WORKDIR /usr/apps/backend
-
-COPY --from=install /usr/apps/backend/node_modules ./node_modules
-COPY --from=backend-build /usr/apps/backend/dist ./dist
-# COPY --from=backend-build /usr/apps/backend/config ./config
-COPY --from=backend-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
-# COPY --from=backend-build /usr/apps/backend/nest-cli.json ./
-COPY --from=backend-build /usr/apps/backend/serverless.backend.local.yml ./
-COPY --from=backend-build /usr/apps/backend/.env ./
-COPY --from=backend-build /usr/apps/backend/package*.json ./
-
-CMD ["sh", "-c", "npx serverless offline start -c serverless.backend.local.yml --httpPort 3001"]
 
 # =======================================================
 # DB Migrate Build Stage
@@ -64,30 +45,16 @@ COPY --from=db-migrate-build /usr/apps/backend/package*.json ./
 
 CMD ["npm", "run", "migration:run"]
 
-# =======================================================
-# Delay Job Build Stage
-# =======================================================
-FROM node:20.15.1-slim AS delay-job-build
-WORKDIR /usr/apps/backend
-
-COPY package*.json .
-RUN npm ci
-
-COPY . .
-RUN npm run build:swc
-COPY ./src/emails/templates ./dist/emails/templates
 
 # =======================================================
-# DB Migrate Final Stage
+# Delay Job Final Stage
 # =======================================================
 FROM node:20.15.1-slim AS delay-job
 WORKDIR /usr/apps/backend
 
-COPY --from=install /usr/apps/backend/node_modules ./node_modules
-COPY --from=delay-job-build /usr/apps/backend/dist ./dist
-COPY --from=delay-job-build /usr/apps/backend/ap-southeast-1-bundle.pem ./
-COPY --from=delay-job-build /usr/apps/backend/serverless.delay-job.local.yml ./
-COPY --from=delay-job-build /usr/apps/backend/.env ./
-COPY --from=delay-job-build /usr/apps/backend/package*.json ./
+COPY package*.json .
+RUN npm ci
+RUN npm i serverless-offline serverless-offline-sqs
+COPY . .
 
-CMD ["sh", "-c", "npx serverless offline start -c serverless.delay-job.local.yml --lambdaPort 3004"]
+CMD ["sh", "-c", "npm run build:swc && npm run delayjob:dev"]

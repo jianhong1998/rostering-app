@@ -38,3 +38,17 @@ db/migration/generate:
 	@cd apps/backend && \
 		npm run build && \
 		npm run migration:generate --name=${name}
+
+format:
+	@cd apps/frontend && \
+		npm run format
+	@cd apps/backend && \
+		npm run format
+	
+install:
+	@cd apps/frontend && \
+		rm -rf node_module && \
+		npm ci
+	@cd apps/backend && \
+		rm -rf node_module && \
+		npm ci
