@@ -1,4 +1,4 @@
-import { hash } from 'argon2';
+// import { hash } from 'argon2';
 import { randomUUID } from 'crypto';
 import { AccountType } from 'src/user/enums/account-type';
 import { AccountModel } from 'src/user/models/account.model';
@@ -12,9 +12,9 @@ export default setSeederFactory(AccountModel, async (faker) => {
   account.email = faker.internet
     .email({ provider: 'jianhong.link' })
     .toLowerCase();
-  account.hashedPassword = await hash('password', {
-    secret: Buffer.from(process.env.PASSWORD_HASH_SECRET ?? ''),
-  });
+  // account.hashedPassword = await hash('password', {
+  //   secret: Buffer.from(process.env.PASSWORD_HASH_SECRET ?? ''),
+  // });
 
   return account;
 });
