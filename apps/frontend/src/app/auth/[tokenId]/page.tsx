@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import FullPageLoading from '@/common/components/loading/full-page-loading';
 import { DataTypeValidationUtil } from '@/utils/data-type-validation.util';
 
-import { login } from './action';
+import { login } from './actions';
 
 interface PageProps {
   params: {
