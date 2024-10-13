@@ -1,6 +1,5 @@
 import {
   BaseEntity,
-  Check,
   Column,
   DeleteDateColumn,
   Entity,
@@ -10,10 +9,6 @@ import {
 import { AccountType } from '../enums/account-type';
 
 @Entity('account')
-@Check(
-  'account_type_password_constraint',
-  `"account_type" = 'EMAIL' AND "hashed_password" IS NOT NULL`,
-)
 export class AccountModel extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
