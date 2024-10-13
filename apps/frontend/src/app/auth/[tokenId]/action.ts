@@ -35,5 +35,10 @@ export const login = async (tokenId: string) => {
     });
   });
 
+  /**@todo remove logging*/
+  cookieStore
+    .getAll()
+    .forEach(({ name, value }) => console.log({ name, value }));
+
   return data;
 };
