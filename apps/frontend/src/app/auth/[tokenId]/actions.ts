@@ -2,43 +2,57 @@
 
 import { cookies } from 'next/headers';
 
+import { IServerActionResponse } from '@/common/types/server-action-response.type';
 import { ServerAxiosClient } from '@/utils/axios-client';
 
-export const login = async (tokenId: string) => {
-  const { data, headers } = await ServerAxiosClient.get<{
-    hashedSecret: string;
-  }>(`/auth`, {
-    params: {
-      id: tokenId,
-    },
-  });
+type IAuthEndpointResponse = {
+  hashedSecret: string;
+};
 
-  const cookieStore = cookies();
+export const login = async (
+  tokenId: string,
+): Promise<IServerActionResponse<IAuthEndpointResponse>> => {
+  try {
+    const { data, headers } =
+      await ServerAxiosClient.get<IAuthEndpointResponse>(`/auth`, {
+        params: {
+          id: tokenId,
+        },
+      });
 
-  headers['set-cookie']?.forEach((cookie) => {
-    const attributes = cookie.split('; ');
-    const cookieName = attributes[0].split('=')[0];
+    const cookieStore = cookies();
 
-    const map = new Map(
-      attributes.map((att) => {
-        const [key, ...value] = att.split('=');
-        return [key, value?.join()];
-      }),
-    );
+    headers['set-cookie']?.forEach((cookie) => {
+      const attributes = cookie.split('; ');
+      const cookieName = attributes[0].split('=')[0];
 
-    cookieStore.set(cookieName, map.get(cookieName) ?? '', {
-      httpOnly: map.has('HttpOnly'),
-      domain: map.get('Domain'),
-      path: map.get('Path'),
-      sameSite: map.get('SameSite') as 'lax' | 'strict' | 'none' | undefined,
-      secure: map.has('Secure'),
+      const map = new Map(
+        attributes.map((att) => {
+          const [key, ...value] = att.split('=');
+          return [key, value?.join()];
+        }),
+      );
+
+      cookieStore.set(cookieName, map.get(cookieName) ?? '', {
+        httpOnly: map.has('HttpOnly'),
+        domain: map.get('Domain'),
+        path: map.get('Path'),
+        sameSite: map.get('SameSite') as 'lax' | 'strict' | 'none' | undefined,
+        secure: map.has('Secure'),
+      });
     });
-  });
 
-  /**@todo remove logging*/
-  cookieStore
-    .getAll()
-    .forEach(({ name, value }) => console.log({ name, value }));
+    console.log({
+      hashedSecret: data.hashedSecret,
+      cookies: cookieStore.getAll().map(({ name, value }) => ({ name, value })),
+    });
 
-  return data;
+    return { isSuccess: true, data };
+  } catch (error) {
+    console.error(error);
+    return {
+      isSuccess: false,
+      error,
+    };
+  }
 };

@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { MiddlewareConfig, NextRequest, NextResponse } from 'next/server';
 
 import { AuthRouteMiddleware } from './middlewares/auth-route.middleware';
 import { ServerAxiosClient } from './utils/axios-client';
 import { EnvironmentVariableUtil } from './utils/environment-variable.util';
 
-export const config = {
+export const config: MiddlewareConfig = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:

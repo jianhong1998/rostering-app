@@ -26,7 +26,17 @@ const Page: FC<PageProps> = ({ params: { tokenId } }) => {
     }
 
     try {
-      const { hashedSecret } = await login(tokenId);
+      const loginResponse = await login(tokenId);
+
+      if (!loginResponse.isSuccess) {
+        const { error } = loginResponse;
+        console.error(error);
+        return;
+      }
+
+      const {
+        data: { hashedSecret },
+      } = loginResponse;
 
       localStorage.setItem('key', hashedSecret);
 
