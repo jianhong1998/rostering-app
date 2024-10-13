@@ -26,13 +26,6 @@ export class AccountModel extends BaseEntity {
   email: string;
 
   @Column({
-    type: 'varchar',
-    nullable: true,
-    name: 'hashed_password',
-  })
-  hashedPassword: string | null;
-
-  @Column({
     type: 'enum',
     enum: AccountType,
     enumName: 'account_account_type',
