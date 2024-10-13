@@ -1,9 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
+import { toast } from 'sonner';
 
-import { getToken } from './action';
+import FullPageLoading from '@/common/components/loading/full-page-loading';
+import { DataTypeValidationUtil } from '@/utils/data-type-validation.util';
+
+import { login } from './action';
 
 interface PageProps {
   params: {
@@ -14,15 +18,33 @@ interface PageProps {
 const Page: FC<PageProps> = ({ params: { tokenId } }) => {
   const router = useRouter();
 
-  useEffect(() => {
-    getToken(tokenId).then(() => {
-      router.replace('/');
-    });
+  const loginFn = useCallback(async () => {
+    if (!DataTypeValidationUtil.isUuid(tokenId)) {
+      toast.error('Invalid token Id');
+      router.replace('/login');
+      return;
+    }
+
+    try {
+      const { hashedSecret } = await login(tokenId);
+
+      localStorage.setItem('key', hashedSecret);
+
+      router.replace(`/`);
+      toast.success('Login successfully!');
+    } catch {
+      toast.error('This login link is expired or used before.');
+      router.replace('/login');
+    }
   }, [tokenId, router]);
+
+  useEffect(() => {
+    loginFn();
+  }, [loginFn]);
 
   return (
     <>
-      <h1>Token</h1>
+      <FullPageLoading open shouldBlur />
     </>
   );
 };

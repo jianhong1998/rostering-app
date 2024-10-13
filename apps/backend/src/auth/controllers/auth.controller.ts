@@ -19,6 +19,7 @@ import { EmailQueueProducerService } from 'src/queue-producer/services/email-pro
 import { EntityManager } from 'typeorm';
 
 import { LoginReqBody } from '../dto/req-body/login-req-body.dto';
+import { VerifyTokenReqBodyDTO } from '../dto/req-body/verify-token-req-body.dto';
 import { AuthService } from '../services/auth.service';
 import { TempTokenService } from '../services/temp-token.service';
 
@@ -79,6 +80,16 @@ export class AuthController {
     });
 
     return { isSuccess: true };
+  }
+
+  @Post('/verify')
+  @Public()
+  async verifyToken(@Body() body: VerifyTokenReqBodyDTO) {
+    const { token } = body;
+
+    const isTokenValid = await this.authService.verifyToken(token);
+
+    return { isTokenValid };
   }
 
   @Get('/')

@@ -90,5 +90,8 @@ services:
         - path: ./apps/frontend/src
           action: sync
           target: /usr/apps/frontend/src
+        - path: ./apps/frontend/middleware.ts
+          target: /usr/apps/frontend/middleware.ts
+          action: sync
         - path: ./apps/frontend/package.json
           action: rebuild

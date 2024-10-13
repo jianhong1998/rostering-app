@@ -32,7 +32,7 @@ export class TokenUtil {
     try {
       this.jwtService.verify(token, { ignoreExpiration: false });
     } catch (_error) {
-      Logger.log('Token failed to verify.', 'VerifyToken');
+      Logger.log('Invalid token.', 'VerifyToken');
       return false;
     }
 
@@ -46,6 +46,16 @@ export class TokenUtil {
     });
 
     return isVerifySecretValid;
+  }
+
+  public verifyTokenWithoutSecret(token: string): boolean {
+    try {
+      this.jwtService.verify(token, { ignoreExpiration: false });
+      return true;
+    } catch (_error) {
+      Logger.log('Invalid token.', 'VerifyToken');
+      return false;
+    }
   }
 
   public decodeToken<T extends object>(token: string): T {
