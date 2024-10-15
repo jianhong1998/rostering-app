@@ -12,9 +12,6 @@ export default setSeederFactory(AccountModel, async (faker) => {
   account.email = faker.internet
     .email({ provider: 'jianhong.link' })
     .toLowerCase();
-  // account.hashedPassword = await hash('password', {
-  //   secret: Buffer.from(process.env.PASSWORD_HASH_SECRET ?? ''),
-  // });
 
   return account;
 });

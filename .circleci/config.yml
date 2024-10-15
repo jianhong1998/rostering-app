@@ -128,45 +128,45 @@ commands:
           dockerfile: Dockerfile.delay-job
           extra_build_args: --provenance=false
 
-  deploy-frontend:
-    parameters:
-      s3_bucket:
-        type: string
-        description: 'S3 bucket name for web hosting'
-      backend_url:
-        type: string
-        description: 'Backend URL'
-    steps:
-      - checkout
-      - run:
-          name: Install Dependencies
-          command: |
-            cd apps/frontend
-            npm ci
-      - run:
-          name: Prepare .env File
-          command: |
-            cd apps/frontend
-            echo VITE_BACKEND_URL=\"<< parameters.backend_url >>\" >> .env
-      - run:
-          name: Print Generated .env File
-          command: |
-            cd apps/frontend
-            cat .env
-      - run:
-          name: Build
-          command: |
-            cd apps/frontend
-            npm run build
-      - aws-cli/install
-      - aws-cli/setup:
-          aws_access_key_id: AWS_ACCESS_KEY
-          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-      - aws-s3/sync:
-          arguments: '--delete'
-          from: ./apps/frontend/dist
-          to: 's3://<< parameters.s3_bucket >>/'
+  # deploy-frontend:
+  #   parameters:
+  #     s3_bucket:
+  #       type: string
+  #       description: 'S3 bucket name for web hosting'
+  #     backend_url:
+  #       type: string
+  #       description: 'Backend URL'
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Install Dependencies
+  #         command: |
+  #           cd apps/frontend
+  #           npm ci
+  #     - run:
+  #         name: Prepare .env File
+  #         command: |
+  #           cd apps/frontend
+  #           echo VITE_BACKEND_URL=\"<< parameters.backend_url >>\" >> .env
+  #     - run:
+  #         name: Print Generated .env File
+  #         command: |
+  #           cd apps/frontend
+  #           cat .env
+  #     - run:
+  #         name: Build
+  #         command: |
+  #           cd apps/frontend
+  #           npm run build
+  #     - aws-cli/install
+  #     - aws-cli/setup:
+  #         aws_access_key_id: AWS_ACCESS_KEY
+  #         aws_secret_access_key: AWS_SECRET_ACCESS_KEY
+  #         region: AWS_DEFAULT_REGION
+  #     - aws-s3/sync:
+  #         arguments: '--delete'
+  #         from: ./apps/frontend/dist
+  #         to: 's3://<< parameters.s3_bucket >>/'
 
 jobs:
   dev-backend-build-image:
@@ -242,14 +242,14 @@ jobs:
             cd apps/backend
             sls deploy --stage dev --verbose
 
-  dev-deploy-frontend:
-    docker:
-      - image: cimg/node:20.17.0
-    resource_class: medium
-    steps:
-      - deploy-frontend:
-          s3_bucket: 'rostering-web'
-          backend_url: 'https://dev.api.rostering.jianhong.link'
+  # dev-deploy-frontend:
+  #   docker:
+  #     - image: cimg/node:20.17.0
+  #   resource_class: medium
+  #   steps:
+  #     - deploy-frontend:
+  #         s3_bucket: 'rostering-web'
+  #         backend_url: 'https://dev.api.rostering.jianhong.link'
 
 workflows:
   deployment:
@@ -260,12 +260,12 @@ workflows:
           #   branches:
           #     only:
           #       - master
-      - approve-dev-frontend-deploy:
-          type: approval
-          # filters:
-          #   branches:
-          #     only:
-          #       - master
+      # - approve-dev-frontend-deploy:
+      #     type: approval
+      # filters:
+      #   branches:
+      #     only:
+      #       - master
       - dev-backend-build-image:
           context:
             - common-database-secret
@@ -309,12 +309,12 @@ workflows:
             - dev-backend-build-image
             - dev-db-migration-build-image
             - dev-delay-job-build-image
-      - dev-deploy-frontend:
-          context:
-            - aws-role-secret
-          requires:
-            - approve-dev-frontend-deploy
-          # filters:
-          #   branches:
-          #     only:
-          #       - master
+      # - dev-deploy-frontend:
+      #     context:
+      #       - aws-role-secret
+      #     requires:
+      #       - approve-dev-frontend-deploy
+      # filters:
+      #   branches:
+      #     only:
+      #       - master
