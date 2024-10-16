@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import FullPageLoading from '@/common/components/loading/full-page-loading';
 import { DataTypeValidationUtil } from '@/utils/data-type-validation.util';
 
-import { login } from './action';
+import { login, loginWithFetch } from './action';
 
 interface PageProps {
   params: {
@@ -26,7 +26,7 @@ const Page: FC<PageProps> = ({ params: { tokenId } }) => {
     }
 
     try {
-      const { hashedSecret } = await login(tokenId);
+      const { hashedSecret } = await loginWithFetch(tokenId);
 
       localStorage.setItem('key', hashedSecret);
 
