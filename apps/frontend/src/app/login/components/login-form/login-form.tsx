@@ -2,6 +2,7 @@
 
 import { Stack } from '@mantine/core';
 import { Form, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
 import { FC } from 'react';
 import { toast } from 'sonner';
 
@@ -12,6 +13,9 @@ import { requestLogin } from '../../action';
 import { ILoginFormData } from '../../types/login-form-data';
 
 const LoginForm: FC = () => {
+  const [isLoading, { close: endLoading, open: startLoading }] =
+    useDisclosure(false);
+
   const form = useForm<ILoginFormData>({
     mode: 'controlled',
     name: 'login-form',
@@ -30,6 +34,7 @@ const LoginForm: FC = () => {
     try {
       if (!value.email) return;
 
+      startLoading();
       await requestLogin(value.email);
       toast.success(
         'Email is sent. Please follow instruction in email to login.',
@@ -37,6 +42,8 @@ const LoginForm: FC = () => {
     } catch (error) {
       console.log(error);
       toast.error('Oops! Something went wrong! Please try again!');
+    } finally {
+      endLoading();
     }
   };
 
@@ -50,7 +57,12 @@ const LoginForm: FC = () => {
             value={form.values.email}
             {...form.getInputProps('email')}
           />
-          <PrimaryButton label="Login" type="submit" />
+          <PrimaryButton
+            label="Login"
+            type="submit"
+            loading={isLoading}
+            disabled={isLoading}
+          />
         </Stack>
       </Form>
     </>

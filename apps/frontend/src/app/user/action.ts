@@ -2,27 +2,17 @@
 
 import { cookies } from 'next/headers';
 
-import { ServerAxiosClient } from '@/utils/axios-client';
+import { CookieHandler } from '@/utils/cookie-handler.utill';
 import { EnvironmentVariableUtil } from '@/utils/environment-variable.util';
 
 export const getUser = async (authKey: string) => {
-  const useCookie = cookies();
-  const token = useCookie.get('token')?.value ?? '';
+  const cookieStore = cookies();
 
   const { serverHost } = EnvironmentVariableUtil.getEnvVarList();
   const url = `${serverHost}/user`;
 
-  // const res = await ServerAxiosClient.get('/user', {
-  //   headers: {
-  //     Cookie: `token=${token}`,
-  //     Authorization: `Bearer ${authKey}`,
-  //   },
-  // });
   const headers = new Headers({
-    Cookie: useCookie
-      .getAll()
-      .map(({ name, value }) => `${name}=${value}`)
-      .join('; '),
+    Cookie: CookieHandler.extractAllCookies(cookieStore),
     Authorization: `Bearer ${authKey}`,
   });
   const res = await fetch(url, {
@@ -30,6 +20,9 @@ export const getUser = async (authKey: string) => {
     credentials: 'include',
     method: 'GET',
     cache: 'default',
+    next: {
+      tags: ['all-users'],
+    },
   });
 
   const data = await res.json();
