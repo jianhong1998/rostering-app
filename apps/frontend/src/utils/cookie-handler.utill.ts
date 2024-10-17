@@ -27,4 +27,13 @@ export class CookieHandler {
       });
     });
   }
+
+  public static extractAllCookies = (
+    cookieStore: ReadonlyRequestCookies,
+  ): string => {
+    return cookieStore
+      .getAll()
+      .map(({ name, value }) => `${name}=${value}`)
+      .join('; ');
+  };
 }
