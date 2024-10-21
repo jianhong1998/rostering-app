@@ -1,9 +1,11 @@
+import { CompanyModel } from 'src/company/models/company.model';
 import {
   BaseEntity,
   Column,
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -44,4 +46,10 @@ export class UserModel extends BaseEntity {
   @OneToOne(() => AccountModel, { onDelete: 'CASCADE' })
   @JoinColumn()
   account?: AccountModel;
+
+  @ManyToOne(() => CompanyModel)
+  @JoinColumn({
+    name: 'company_uuid',
+  })
+  company: CompanyModel;
 }
