@@ -38,6 +38,7 @@ db/migration/generate:
 	@cd apps/backend && \
 		npm run build && \
 		npm run migration:generate --name=${name}
+	@$(MAKE) format
 
 format:
 	@cd apps/frontend && \

@@ -33,6 +33,10 @@ services:
         - path: ./apps/backend/src
           target: /usr/apps/backend/src
           action: sync+restart
+          ignore:
+            - database/factories
+            - database/migrations
+            - database/seeders
         - path: ./apps/backend/package.json
           action: rebuild
     healthcheck:
@@ -76,6 +80,10 @@ services:
         - path: ./apps/backend/src
           target: /usr/apps/backend/src
           action: sync+restart
+          ignore:
+            - database/factories
+            - database/migrations
+            - database/seeders
         - path: ./apps/backend/package.json
           action: rebuild
 

@@ -17,17 +17,15 @@ export class User1726575245506 implements Seeder {
       const TOTAL_USER = 10;
       const COMPANY_UUID = 'f5c5fef6-9e3a-4cf4-99a3-5f68978cd571';
       const userFactory = factoryManager.get(UserModel);
-      const savedUsers = await userFactory.saveMany(TOTAL_USER);
+      const users = [];
 
-      console.log(`Saved user: ${savedUsers.map((user) => user.uuid)}`);
+      for (let count = 0; count < TOTAL_USER; count++) {
+        users.push(await userFactory.make(undefined, false));
+      }
 
       const accounts = [] as AccountModel[];
 
-      const company = await manager.findOne(CompanyModel, {
-        where: { uuid: COMPANY_UUID },
-      });
-
-      savedUsers.forEach((user) => {
+      users.forEach((user) => {
         const username = user.fullName.split(' ').join('_').toLowerCase();
         const randomNumber = randomInt(1, 99);
 
@@ -37,19 +35,25 @@ export class User1726575245506 implements Seeder {
 
         accounts.push(account);
         user.account = account;
-        user.company = company;
       });
 
       await manager.save(accounts);
-      await manager.save(savedUsers);
+      await manager.save(users);
+      console.log(
+        `Saved user: [ ${users.map((user) => user.uuid).join(' / ')} ]`,
+      );
 
-      const userToBeDeleted = savedUsers.filter((_, index) => index % 5 === 0);
+      const userToBeDeleted = users.filter((_, index) => index % 5 === 0);
       const deletedUser = await manager.softRemove(userToBeDeleted);
 
       if (deletedUser.length !== userToBeDeleted.length)
         throw new Error(
           `Not all user been deleted: ${deletedUser.length} (Deleted) & ${userToBeDeleted.length} (To be deleted)`,
         );
+
+      const company = await manager.findOne(CompanyModel, {
+        where: { uuid: COMPANY_UUID },
+      });
 
       // User with real email
       const userAccount = new AccountModel();

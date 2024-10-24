@@ -43,11 +43,21 @@ export class UserModel extends BaseEntity {
   })
   deletedAt: Date | null;
 
-  @OneToOne(() => AccountModel, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @OneToOne(() => AccountModel, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: false,
+  })
+  @JoinColumn({
+    name: 'account_uuid',
+  })
   account?: AccountModel;
 
-  @ManyToOne(() => CompanyModel)
+  @ManyToOne(() => CompanyModel, {
+    onDelete: 'CASCADE',
+    nullable: false,
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({
     name: 'company_uuid',
   })
