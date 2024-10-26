@@ -59,6 +59,7 @@ export class AuthGuardService implements CanActivate {
       },
       relation: {
         account: true,
+        company: true,
       },
     });
 

@@ -31,6 +31,11 @@ db/data/up:
 		npm run build && \
 		npm run seed:run
 
+db/data/generate:
+	@cd apps/backend && \
+		npm run seed:create --name=${name}
+	@$(MAKE) format
+
 # ======================================================================
 # example: make db/migration/generate name=init
 # ======================================================================
@@ -38,6 +43,8 @@ db/migration/generate:
 	@cd apps/backend && \
 		npm run build && \
 		npm run migration:generate --name=${name}
+	@$(MAKE) format
+
 
 format:
 	@cd apps/frontend && \
