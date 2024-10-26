@@ -18,10 +18,6 @@ import {
   'timeslot_minute_constraint',
   'start_minute >= 0 AND start_minute <= 59 AND end_minute >= 0 AND end_minute <= 59',
 )
-@Check(
-  'timeslot_start_time_end_time_constraint',
-  'start_hour * 60 + start_minute < end_hour * 60 + end_minute',
-)
 export class TimeslotModel {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
