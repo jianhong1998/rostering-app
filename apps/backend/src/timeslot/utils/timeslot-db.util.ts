@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { TimeslotModel } from '../models/timeslot.model';
+import { ITimeslotCreationParams } from '../types/timeslot-creation.params.type';
 
 @Injectable()
 export class TimeslotDBUtil {
@@ -16,11 +17,18 @@ export class TimeslotDBUtil {
     private readonly timeslotRepo: Repository<TimeslotModel>,
   ) {}
 
-  public async createTimeslot(params: {
-    timeslot: TimeslotModel;
-    manager?: EntityManager;
-  }): Promise<TimeslotModel> {
-    const { timeslot, manager } = params;
+  public async createTimeslot(
+    params: ITimeslotCreationParams & { manager?: EntityManager },
+  ): Promise<TimeslotModel> {
+    const { company, endHour, endMinute, startHour, startMinute, manager } =
+      params;
+
+    const timeslot = new TimeslotModel();
+    timeslot.startHour = startHour;
+    timeslot.startMinute = startMinute;
+    timeslot.endHour = endHour;
+    timeslot.endMinute = endMinute;
+    timeslot.company = company;
 
     const repo = manager?.getRepository(TimeslotModel) ?? this.timeslotRepo;
 

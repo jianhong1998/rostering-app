@@ -9,6 +9,7 @@ import { AuthGuardService } from './auth/services/auth-guard.service';
 import { CommonModule } from './common/common.module';
 import { CompanyModule } from './company/company.module';
 import { QueueProducerModule } from './queue-producer/producer.module';
+import { TimeslotModule } from './timeslot/timeslot.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     AuthModule,
     CompanyModule,
+    TimeslotModule,
   ],
   controllers: [AppController],
   providers: [

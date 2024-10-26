@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AccountType } from 'src/user/enums/account-type';
+import { UserModel } from 'src/user/models/user.model';
 import { UserDBUtil } from 'src/user/utils/userDB.util';
 
 import { TokenUtil } from '../utils/token.util';
@@ -13,7 +14,9 @@ export class AuthService {
     private readonly tempTokenService: TempTokenService,
   ) {}
 
-  public async login(email: string) {
+  public async findLoginUserByEmail(
+    email: string,
+  ): Promise<{ user: UserModel | null }> {
     const user = await this.userDBUtil.getOne({
       criterial: {
         account: {
@@ -25,8 +28,6 @@ export class AuthService {
         account: true,
       },
     });
-
-    if (!user) throw new UnauthorizedException('Email is not registered.');
 
     return { user };
   }

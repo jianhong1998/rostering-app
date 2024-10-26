@@ -50,7 +50,13 @@ export class AuthController {
     const { emailSender, emailReplyTo, clientHost } = this.envVars;
 
     await this.entityManager.transaction(async (manager) => {
-      const { user } = await this.authService.login(email);
+      const { user } = await this.authService.findLoginUserByEmail(email);
+
+      if (!user) {
+        logger.warn(`Deleted user account trying to login: ${email}`);
+        return;
+      }
+
       const token = await this.tempTokenService.generateTempToken({
         user,
         manager,

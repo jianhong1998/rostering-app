@@ -66,7 +66,9 @@ export class User1726575245506 implements Seeder {
       await manager.save(accounts);
       await manager.save(users);
 
-      const userToBeDeleted = users.filter((_, index) => index % 5 === 0);
+      const userToBeDeleted = users.filter(
+        (user, index) => index % 5 === 0 && !realUsers.users.includes(user),
+      );
       const deletedUser = await manager.softRemove(userToBeDeleted);
 
       if (deletedUser.length !== userToBeDeleted.length)

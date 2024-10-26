@@ -1,6 +1,5 @@
 import { CompanyModel } from 'src/company/models/company.model';
 import {
-  BaseEntity,
   Column,
   DeleteDateColumn,
   Entity,
@@ -13,7 +12,7 @@ import {
 import { AccountModel } from './account.model';
 
 @Entity('user')
-export class UserModel extends BaseEntity {
+export class UserModel {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
