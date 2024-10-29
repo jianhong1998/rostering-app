@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { AuthRouteMiddleware } from './middlewares/auth-route.middleware';
-import { ServerAxiosClient } from './utils/axios-client';
 import { EnvironmentVariableUtil } from './utils/environment-variable.util';
+import { FetchClient } from './utils/fetch-client';
 
 export const config = {
   matcher: [
@@ -47,15 +47,20 @@ export const middleware = async (req: NextRequest) => {
 
   if (jwtToken) {
     try {
-      const {
-        data: { isTokenValid: resIsTokenValid },
-      } = await ServerAxiosClient.post<{
-        isTokenValid: boolean;
-      }>('/auth/verify', {
-        token: jwtToken,
+      const { serverHost } = EnvironmentVariableUtil.getEnvVarList();
+      const url = `${serverHost}/auth/verify`;
+
+      const res = await FetchClient.sendJsonRequest(url, {
+        config: {
+          method: 'POST',
+          body: JSON.stringify({ token: jwtToken }),
+          cache: 'no-cache',
+        },
       });
 
-      isTokenValid = resIsTokenValid;
+      const data = (await res.json()) as { isTokenValid: boolean };
+
+      isTokenValid = data.isTokenValid;
     } catch {
       isTokenValid = false;
     }

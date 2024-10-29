@@ -2,38 +2,50 @@
 
 import { cookies } from 'next/headers';
 
-import { ServerAxiosClient } from '@/utils/axios-client';
+import { IBackendErrorResponse } from '@/common/types/backend-response.type';
+import { IServerActionResponse } from '@/common/types/server-action-response.type';
+import { CookieHandler } from '@/utils/cookie-handler.utill';
+import { EnvironmentVariableUtil } from '@/utils/environment-variable.util';
+import { FetchClient } from '@/utils/fetch-client';
 
-export const login = async (tokenId: string) => {
-  const { data, headers } = await ServerAxiosClient.get<{
-    hashedSecret: string;
-  }>(`/auth`, {
-    params: {
-      id: tokenId,
+export const login = async (
+  tokenId: string,
+): Promise<IServerActionResponse<{ hashedSecret: string }>> => {
+  const { serverHost } = EnvironmentVariableUtil.getEnvVarList();
+  const url = `${serverHost}/auth?id=${tokenId}`;
+
+  const res = await FetchClient.sendJsonRequest(url, {
+    config: {
+      method: 'GET',
+      credentials: 'include',
+      cache: 'no-cache',
     },
   });
 
+  if (!res.ok) {
+    const errorData = (await res.json()) as IBackendErrorResponse;
+
+    console.error({ key: 'Failed to login', payload: { tokenId }, errorData });
+
+    return {
+      isSuccess: false,
+      error: {
+        statusCode: res.status,
+        errorMessage: errorData.message,
+      },
+    };
+  }
+
+  const data = (await res.json()) as { hashedSecret: string };
+
   const cookieStore = cookies();
+  const setCookieArray = res.headers.getSetCookie();
+  CookieHandler.handleSetCookies(cookieStore, setCookieArray);
 
-  headers['set-cookie']?.forEach((cookie) => {
-    const attributes = cookie.split('; ');
-    const cookieName = attributes[0].split('=')[0];
-
-    const map = new Map(
-      attributes.map((att) => {
-        const [key, ...value] = att.split('=');
-        return [key, value?.join()];
-      }),
-    );
-
-    cookieStore.set(cookieName, map.get(cookieName) ?? '', {
-      httpOnly: map.has('HttpOnly'),
-      domain: map.get('Domain'),
-      path: map.get('Path'),
-      sameSite: map.get('SameSite') as 'lax' | 'strict' | 'none' | undefined,
-      secure: map.has('Secure'),
-    });
-  });
-
-  return data;
+  return {
+    isSuccess: true,
+    data: {
+      hashedSecret: data.hashedSecret,
+    },
+  };
 };

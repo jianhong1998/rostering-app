@@ -51,6 +51,12 @@ format:
 		npm run format
 	@cd apps/backend && \
 		npm run format
+
+lint:
+	@cd apps/frontend && \
+		npm run lint
+	@cd apps/backend && \
+		npm run lint
 	
 install:
 	@cd apps/frontend && \
