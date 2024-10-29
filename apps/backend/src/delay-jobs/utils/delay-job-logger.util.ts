@@ -8,6 +8,7 @@ export class DelayJobLogger {
   public log(message: unknown) {
     if (typeof message === 'object' && message !== null) {
       console.log(`${this.logKey}\n${JSON.stringify(message)}`);
+      return;
     }
 
     console.log(`${this.logKey} - ${message}`);
@@ -20,6 +21,7 @@ export class DelayJobLogger {
       message instanceof Error
     ) {
       console.error(`${this.logKey} - ${message.name} - ${message.message}`);
+      return;
     }
 
     console.error(message);
@@ -28,6 +30,7 @@ export class DelayJobLogger {
   public debug(message: unknown) {
     if (typeof message === 'object' && message !== null) {
       console.debug(`[DEBUG] - ${this.logKey}\n ${JSON.stringify(message)}`);
+      return;
     }
 
     console.debug(`[DEBUG] - ${this.logKey} - ${message}`);
@@ -36,6 +39,7 @@ export class DelayJobLogger {
   public warn(message: unknown) {
     if (typeof message === 'object' && message !== null) {
       console.warn(`[WARN] - ${this.logKey}\n ${JSON.stringify(message)}`);
+      return;
     }
 
     console.warn(`[WARN] - ${this.logKey} - ${message}`);

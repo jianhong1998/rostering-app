@@ -13,8 +13,8 @@ export const handler: Handler = async (
   const logger = new DelayJobLogger('Root');
 
   if (!('Records' in event)) {
-    logger.log('Cannot identify event as a SQS event');
-    return;
+    logger.error('Cannot identify event as a SQS event');
+    throw new Error('Cannot identify event as a SQS event');
   }
 
   const pendingList = event.Records;
@@ -27,10 +27,14 @@ export const handler: Handler = async (
 
       await handler(record as unknown as IEventInfo);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       failedList.push(record);
     }
   }
 
-  logger.log({ failedList });
+  if (failedList.length) {
+    logger.error({ failedList });
+  } else {
+    logger.log('All jobs are executed successfully');
+  }
 };

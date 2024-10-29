@@ -6,6 +6,7 @@ import { IBackendErrorResponse } from '@/common/types/backend-response.type';
 import { IServerActionResponse } from '@/common/types/server-action-response.type';
 import { CookieHandler } from '@/utils/cookie-handler.utill';
 import { EnvironmentVariableUtil } from '@/utils/environment-variable.util';
+import { FetchClient } from '@/utils/fetch-client';
 
 export const login = async (
   tokenId: string,
@@ -13,10 +14,12 @@ export const login = async (
   const { serverHost } = EnvironmentVariableUtil.getEnvVarList();
   const url = `${serverHost}/auth?id=${tokenId}`;
 
-  const res = await fetch(url, {
-    method: 'GET',
-    credentials: 'include',
-    cache: 'no-cache',
+  const res = await FetchClient.sendJsonRequest(url, {
+    config: {
+      method: 'GET',
+      credentials: 'include',
+      cache: 'no-cache',
+    },
   });
 
   if (!res.ok) {
