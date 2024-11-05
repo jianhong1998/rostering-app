@@ -60,5 +60,5 @@ export class UserModel {
   @JoinColumn({
     name: 'company_uuid',
   })
-  company: CompanyModel;
+  company?: CompanyModel;
 }

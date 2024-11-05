@@ -63,5 +63,5 @@ export class TimeslotModel {
   @JoinColumn({
     name: 'company_uuid',
   })
-  company: CompanyModel;
+  company?: CompanyModel;
 }

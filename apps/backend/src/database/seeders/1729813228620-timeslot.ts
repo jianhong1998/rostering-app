@@ -1,16 +1,18 @@
 import { CompanyModel } from 'src/company/models/company.model';
 import { TimeslotModel } from 'src/timeslot/models/timeslot.model';
-import { DataSource } from 'typeorm';
+import { WeekdayTimeslotModel } from 'src/timeslot/models/weekday-timeslot.model';
+import { DataSource, EntityManager } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 
 export class Timeslot1729813228620 implements Seeder {
   track = false;
+  private companyUuid = 'f5c5fef6-9e3a-4cf4-99a3-5f68978cd571';
 
   public async run(
     dataSource: DataSource,
     _factoryManager: SeederFactoryManager,
   ): Promise<any> {
-    const COMPANY_UUID = 'f5c5fef6-9e3a-4cf4-99a3-5f68978cd571';
+    const COMPANY_UUID = this.companyUuid;
 
     const numberOfTimeslotExist = await dataSource.manager.countBy(
       TimeslotModel,
@@ -65,6 +67,59 @@ export class Timeslot1729813228620 implements Seeder {
       console.log(
         `Timeslot created: [ ${createdTimeslots.map((timeslot) => timeslot.uuid).join(' / ')} ]\n`,
       );
+
+      const createdWeekdayTimeslots = await this.createWeekdayTimeslots(
+        createdTimeslots,
+        manager,
+      );
+
+      console.log(
+        `Weekday Timeslot created: [ ${createdWeekdayTimeslots.map((weekdayTimeslot) => weekdayTimeslot.uuid).join(' / ')} ]\n`,
+      );
     });
+  }
+
+  private async createWeekdayTimeslots(
+    timeslots: TimeslotModel[],
+    manager: EntityManager,
+  ) {
+    const newWeekdayTimeslots = [];
+    let weekdayNumber = 1;
+
+    while (weekdayNumber <= 7) {
+      timeslots.forEach((timeslot) => {
+        const weekdayTimeslot = new WeekdayTimeslotModel();
+
+        weekdayTimeslot.timeslot = timeslot;
+        weekdayTimeslot.weekdayNumber = weekdayNumber;
+
+        newWeekdayTimeslots.push(weekdayTimeslot);
+      });
+
+      weekdayNumber++;
+    }
+
+    await manager.save(newWeekdayTimeslots);
+
+    const createdWeekdayTimeslots = await manager.find(WeekdayTimeslotModel, {
+      where: {
+        timeslot: {
+          company: {
+            uuid: this.companyUuid,
+          },
+        },
+      },
+    });
+
+    if (createdWeekdayTimeslots.length !== newWeekdayTimeslots.length) {
+      console.error(
+        `Failed to create weekday timeslots: number of created (${createdWeekdayTimeslots.length}) and number of to be created (${newWeekdayTimeslots.length}) are not match`,
+      );
+      throw new Error(
+        `number of created (${createdWeekdayTimeslots.length}) and number of to be created (${newWeekdayTimeslots.length}) are not match`,
+      );
+    }
+
+    return createdWeekdayTimeslots;
   }
 }

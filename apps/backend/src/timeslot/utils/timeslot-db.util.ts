@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { TimeslotModel } from '../models/timeslot.model';
-import { ITimeslotCreationParams } from '../types/timeslot-creation.params.type';
+import { ITimeslotCreationParams } from '../types/timeslot-creation-params.type';
 
 @Injectable()
 export class TimeslotDBUtil {
@@ -32,9 +32,9 @@ export class TimeslotDBUtil {
 
     const repo = manager?.getRepository(TimeslotModel) ?? this.timeslotRepo;
 
-    const saved = await repo.save([timeslot]);
+    const saved = await repo.save(timeslot);
 
-    return saved[0];
+    return saved;
   }
 
   public async getAll(params: {
